@@ -104,6 +104,16 @@ task copyWeb(type: Copy) {
   into('build/package/web')
 }
 
+task copyChaiJs(type: Copy) {
+  from('../node_modules/chai')
+  into('build/package/web/js/chai')
+}
+
+task copyMochaJs(type: Copy) {
+  from('../node_modules/mocha')
+  into('build/package/web/js/mocha')
+}
+
 task copyLess(type: Copy, dependsOn: ['lesscss', 'copyWeb']) {
   from('build/less')
   into('build/package/web/css')
@@ -135,6 +145,8 @@ task copy(dependsOn: [
         'createDirs',
         'copyLess',
         'copyDust',
+        'copyChaiJs',
+        'copyMochaJs',
         'copyDeps',
         'copyLibs',
         'copyPackage']) {

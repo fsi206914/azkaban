@@ -13,6 +13,10 @@ buildscript {
   }
 }
 
+plugins {
+  id "com.moowork.node" version "0.13"
+}
+
 apply plugin: 'com.cinnober.gradle.semver-git'
 apply plugin: 'idea'
 apply plugin: 'distribution'
@@ -35,6 +39,28 @@ def cmdCaller = { commandln ->
   }
   return stdout.toString().trim()
 }
+
+task jsTest(type:Exec) {
+  workingDir '.'
+  ignoreExitValue = true
+  //on linux
+  commandLine 'node', 'node_modules/mocha/bin/mocha', 'node_modules/test/'
+  //store the output instead of printing to the console:
+  standardOutput = new ByteArrayOutputStream()
+  doLast {
+    println standardOutput
+    if (execResult) {
+      println execResult
+      if(execResult.exitValue == 0) {
+        println "All js Tests passed"
+      }
+      else{
+        throw new GradleException('Required GRADLE_USER_HOME environment variable not set.')
+      }
+    }
+  }
+}
+
 
 subprojects {
   apply plugin: 'java'
@@ -145,7 +171,7 @@ migrationDistTar.compression = Compression.GZIP
 migrationDistTar.extension = 'tar.gz'
 migrationDistZip.dependsOn ':azkaban-common:build', ':azkaban-migration:copy'
 
-webserverDistTar.dependsOn ':azkaban-common:build', ':azkaban-webserver:copy'
+webserverDistTar.dependsOn ':azkaban-common:build', 'npmInstall', 'jsTest', ':azkaban-webserver:copy'
 webserverDistTar.compression = Compression.GZIP
 webserverDistTar.extension = 'tar.gz'
 webserverDistZip.dependsOn ':azkaban-common:build', ':azkaban-webserver:copy'
