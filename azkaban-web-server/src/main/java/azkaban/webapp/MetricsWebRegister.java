@@ -1,22 +1,17 @@
 package azkaban.webapp;
 
-import azkaban.metrics.MetricsWorker;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.RatioGauge;
-import com.codahale.metrics.Timer;
 import com.codahale.metrics.Gauge;
 
 import azkaban.executor.ExecutorManager;
 
-public class MetricsWebWorker extends MetricsWorker {
+public class MetricsWebRegister{
   private ExecutorManager _executorManager;
+  private String endpointName;
 
-  public MetricsWebWorker(MetricsWebWorkerBuilder builder) {
-    super(builder.endpointName);
+  public MetricsWebRegister(MetricsWebRegisterBuilder builder) {
+    this.endpointName = builder.endpointName;
     this._executorManager = builder._executorManager;
   }
 
@@ -31,29 +26,29 @@ public class MetricsWebWorker extends MetricsWorker {
       }
     });
 
-    metrics.register("WEB-NumQueuedFlows", new Gauge<Long>() {
+    metrics.register("WEB-NumQueuedFlows", new Gauge<Integer>() {
       @Override
-      public Long getValue() {
-        return _executorManager.getQueuedFlowSize();
+      public Integer getValue() {
+        return _executorManager.getQueuedFlowNum();
       }
     });
   }
 
-  public static class MetricsWebWorkerBuilder {
+  public static class MetricsWebRegisterBuilder {
     private ExecutorManager _executorManager;
     private String endpointName;
 
-    public MetricsWebWorkerBuilder(String endpointName) {
+    public MetricsWebRegisterBuilder(String endpointName) {
       this.endpointName = endpointName;
     }
 
-    public MetricsWebWorkerBuilder addExecutorManager(ExecutorManager executorManager) {
+    public MetricsWebRegisterBuilder addExecutorManager(ExecutorManager executorManager) {
       this._executorManager = executorManager;
       return this;
     }
 
-    public MetricsWebWorker build() {
-      return new MetricsWebWorker(this);
+    public MetricsWebRegister build() {
+      return new MetricsWebRegister(this);
     }
   }
 

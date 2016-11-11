@@ -177,10 +177,10 @@ public class AzkabanExecutorServer {
   private void startMetrics() throws Exception{
     MetricRegistry metrics = MetricsManager.INSTANCE.getRegistry();
     metrics.register("LATANGJVM/memory", new MemoryUsageGaugeSet());
-//    MetricsExecWorker execWorker = new MetricsExecWorker.MetricsExecWorkerBuilder("a")
-//        .addFlowRunnerManager(getFlowRunnerManager())
-//        .build();
-//    execWorker.addExecutorManagerMetrics(metrics);
+    MetricsExecRegister execWorker = new MetricsExecRegister.MetricsExecRegisterBuilder("a")
+        .addFlowRunnerManager(getFlowRunnerManager())
+        .build();
+    execWorker.addExecutorManagerMetrics(metrics);
 
     String metricsReporterClassName = props.get(CUSTOM_METRICS_REPORTER_CLASS_NAME);
     if (metricsReporterClassName != null) {
@@ -203,7 +203,6 @@ public class AzkabanExecutorServer {
       logger.info("No value for property: "
           + CUSTOM_METRICS_REPORTER_CLASS_NAME + " was found");
     }
-
   }
 
   private void configureJobCallback(Props props) {

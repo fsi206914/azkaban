@@ -2,6 +2,9 @@ package azkaban.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +14,15 @@ public enum MetricsManager {
 
   private final MetricRegistry registry        = new MetricRegistry();
   private ConsoleReporter consoleReporter      = null;
+
+  /**
+   * The private constructor is automatically called when this enum class is instantiated.
+   */
+  private MetricsManager() {
+    registry.register("JVM_Memory", new MemoryUsageGaugeSet());
+    registry.register("JVM_Thread", new ThreadStatesGaugeSet());
+    registry.register("JVM_GC", new GarbageCollectorMetricSet());
+  }
 
   /**
    * Return the Metrics registry.

@@ -601,6 +601,28 @@ public class ExecutorManager extends EventHandler implements
     return allIds.toString();
   }
 
+  /**
+   *
+   * @return ID list of current queued flows.
+   */
+  public List<Integer>  getQueueFlowsFromDB(){
+    List<Integer> queueIds = new ArrayList<Integer>();
+    try {
+      List<Pair<ExecutionReference, ExecutableFlow>> queueList = executorLoader.fetchQueuedFlows();
+      if (queueList != null) {
+        for (Pair<ExecutionReference, ExecutableFlow> pair : queueList) {
+          queueIds.add(pair.getFirst().getExecId());
+        }
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return queueIds;
+  }
+
+  public int getQueuedFlowNum() {
+    return getQueueFlowsFromDB().size();
+  }
 
   public long getQueuedFlowSize() {
     return queuedFlows.size();
