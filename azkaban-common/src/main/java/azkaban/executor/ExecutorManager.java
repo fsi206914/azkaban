@@ -16,7 +16,8 @@
 
 package azkaban.executor;
 
-import azkaban.utils.FlowUtils;
+
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.State;
@@ -48,6 +49,7 @@ import azkaban.event.Event;
 import azkaban.event.Event.Type;
 import azkaban.event.EventData;
 import azkaban.event.EventHandler;
+import azkaban.event.EventListener;
 import azkaban.executor.selector.ExecutorComparator;
 import azkaban.executor.selector.ExecutorFilter;
 import azkaban.executor.selector.ExecutorSelector;
@@ -56,15 +58,15 @@ import azkaban.project.ProjectWhitelist;
 import azkaban.scheduler.ScheduleStatisticManager;
 import azkaban.utils.FileIOUtils.JobMetaData;
 import azkaban.utils.FileIOUtils.LogData;
+import azkaban.utils.FlowUtils;
 import azkaban.utils.JSONUtils;
 import azkaban.utils.Pair;
 import azkaban.utils.Props;
-
 /**
  * Executor manager used to manage the client side job.
  *
  */
-public class ExecutorManager extends EventHandler implements
+public class ExecutorManager implements EventHandler,
     ExecutorManagerAdapter {
   static final String AZKABAN_EXECUTOR_SELECTOR_FILTERS =
       "azkaban.executorselector.filters";
@@ -108,6 +110,7 @@ public class ExecutorManager extends EventHandler implements
 
   private long lastThreadCheckTime = -1;
   private String updaterStage = "not started";
+  private static HashSet<EventListener> listeners = new HashSet<>();
 
   private Map<String, Alerter> alerters;
 
@@ -147,6 +150,10 @@ public class ExecutorManager extends EventHandler implements
     cleanerThread = new CleanerThread(executionLogsRetentionMs);
     cleanerThread.start();
 
+  }
+
+  public HashSet<EventListener> getListeners() {
+    return listeners;
   }
 
   private void setupMultiExecutorMode() {
