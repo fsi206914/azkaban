@@ -29,7 +29,10 @@ public class Event {
     EXTERNAL_JOB_UPDATED,
     UPLOAD_FILE_CHUNK,
     USER_DOWNLOAD_FILE,
-    AZ_DOWNLOAD_FILE
+    AZ_DOWNLOAD_FILE,
+    DB_CONNECTION,
+    GET_CALL,
+    POST_CALL
   }
 
   private final Object runner;

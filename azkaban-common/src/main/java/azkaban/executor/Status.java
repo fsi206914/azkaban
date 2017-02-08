@@ -29,8 +29,7 @@ public enum Status {
   DISABLED(100),
   QUEUED(110),
   FAILED_SUCCEEDED(120),
-  CANCELLED(130),
-  FILE_UPLOADING(140);
+  CANCELLED(130);
 
   private int numVal;
 
@@ -70,8 +69,6 @@ public enum Status {
         return FAILED_SUCCEEDED;
       case 130:
         return CANCELLED;
-      case 140:
-        return FILE_UPLOADING;
     default:
       return READY;
     }

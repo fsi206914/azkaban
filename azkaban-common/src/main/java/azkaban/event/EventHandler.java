@@ -16,26 +16,31 @@
 
 package azkaban.event;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * Due to History legacy, this interface is being used by many other modules, and we can not
+ * entirely refactor this interface.
+ * TODO: Refactor especially return type in getListeners method.
+ */
 public interface EventHandler {
 
-  public HashSet<EventListener> getListeners();
+  HashSet<EventListener> getListeners();
 
-  default public void addListener(EventListener listener) {
+  default void addListener(EventListener listener) {
     getListeners().add(listener);
   }
 
-  default public void fireEventListeners(Event event) {
-    ArrayList<EventListener> listeners =
-        new ArrayList<EventListener>(getListeners());
-    for (EventListener listener : listeners) {
-      listener.handleEvent(event);
+  default void fireEventListeners(Event event) {
+
+    synchronized (this) {
+      for (EventListener listener : getListeners()) {
+        listener.handleEvent(event);
+      }
     }
   }
 
-  default public void removeListener(EventListener listener) {
+  default void removeListener(EventListener listener) {
     getListeners().remove(listener);
   }
 }

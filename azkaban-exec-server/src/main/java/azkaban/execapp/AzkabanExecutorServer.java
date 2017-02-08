@@ -140,6 +140,9 @@ public class AzkabanExecutorServer {
 
     logger.info("Started Executor Server on " + getExecutorHostPort());
 
+    // TODO: Currently we start collecting metrics after server is all up.
+    // We might consider putting the metrics launch process in the main function, to
+    // collect other metrics on demand.
     if (props.getBoolean(ServerProperties.IS_METRICS_ENABLED, false)) {
       startExecMetrics();
     }
@@ -188,11 +191,9 @@ public class AzkabanExecutorServer {
     MetricRegistry metrics = MetricsManager.INSTANCE.getRegistry();
 
     logger.info("starting reporting Executor Metrics");
-    MetricsExecRegister execWorker =
-        new MetricsExecRegister.MetricsExecRegisterBuilder("EXEC").addFlowRunnerManager(getFlowRunnerManager()).build();
-    execWorker.addExecutorManagerMetrics(metrics);
-
+//    MetricsExecListener.INSTANCE.registerFlowRunnerManagerMetrics(metrics, getFlowRunnerManager());
     CommonMetrics.INSTANCE.addExecDBStateMetrics(metrics);
+    CommonMetrics.INSTANCE.registerCommonMetrics(metrics);
     MetricsManager.INSTANCE.startReporting("AZ-EXEC", props);
   }
 

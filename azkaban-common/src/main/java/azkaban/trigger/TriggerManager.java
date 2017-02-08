@@ -16,6 +16,8 @@
 
 package azkaban.trigger;
 
+import azkaban.event.MultitonListenerSet;
+import azkaban.metrics.CommonMetrics;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -54,7 +56,6 @@ public class TriggerManager implements EventHandler,
   private long runnerThreadIdleTime = -1;
   private LocalTriggerJMX jmxStats = new LocalTriggerJMX();
 
-  private static HashSet<EventListener> triggerManagerListeners = new HashSet<>();
 
   private ExecutorManagerEventListener listener =
       new ExecutorManagerEventListener();
@@ -109,7 +110,7 @@ public class TriggerManager implements EventHandler,
   }
 
   public HashSet<EventListener> getListeners() {
-    return triggerManagerListeners;
+    return MultitonListenerSet.getInstance(MultitonListenerSet.ListenerType.COMMON, CommonMetrics.INSTANCE).getListeners();
   }
 
   protected CheckerTypeLoader getCheckerLoader() {

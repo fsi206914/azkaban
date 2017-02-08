@@ -48,9 +48,9 @@ public enum MetricsManager {
    * Constructor is eaagerly called when this class is loaded.
    */
   private MetricsManager() {
-    registry.register("MEMORY_Gauge", new MemoryUsageGaugeSet());
-    registry.register("GC_Gauge", new GarbageCollectorMetricSet());
-    registry.register("Thread_State_Gauge", new ThreadStatesGaugeSet());
+//    registry.register("MEMORY_Gauge", new MemoryUsageGaugeSet());
+//    registry.register("GC_Gauge", new GarbageCollectorMetricSet());
+//    registry.register("Thread_State_Gauge", new ThreadStatesGaugeSet());
   }
   /**
    * Return the Metrics registry.

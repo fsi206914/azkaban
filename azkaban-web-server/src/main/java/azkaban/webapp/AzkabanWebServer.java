@@ -228,6 +228,10 @@ public class AzkabanWebServer extends AzkabanServer {
     }
 
     configureMBeanServer();
+
+    // TODO: Currently we start collecting metrics after server is all up.
+    // We might consider putting the metrics launch process in the main function, to
+    // collect other metrics on demand.
     if (props.getBoolean(ServerProperties.IS_METRICS_ENABLED, false)) {
       startWebMetrics();
     }
@@ -236,12 +240,10 @@ public class AzkabanWebServer extends AzkabanServer {
   private void startWebMetrics() throws Exception {
     MetricRegistry metrics = MetricsManager.INSTANCE.getRegistry();
 
-    MetricsWebRegister webWorker = new MetricsWebRegister.MetricsWebRegisterBuilder("WEB")
-        .addExecutorManager(getExecutorManager())
-        .build();
-    webWorker.addExecutorManagerMetrics(metrics);
-
+    MetricsWebListener.INSTANCE.registerExecutorManagerMetrics(metrics, executorManager);
+    MetricsWebListener.INSTANCE.addAPIMetrics(metrics);
     CommonMetrics.INSTANCE.addWebDBStateMetrics(metrics);
+    CommonMetrics.INSTANCE.registerCommonMetrics(metrics);
     MetricsManager.INSTANCE.startReporting("AZ-WEB", props);
   }
 

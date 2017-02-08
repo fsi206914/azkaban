@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 LinkedIn Corp.
+ * Copyright 2017 LinkedIn Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 
 
 /**
- * This class MetricsWebRegister is in charge of collecting metrics from web server.
+ * This singleton class CommonMetrics is in charge of collecting metrics from web server.
  */
 public enum CommonMetrics implements EventListener {
   INSTANCE;
@@ -33,6 +33,7 @@ public enum CommonMetrics implements EventListener {
   private Meter uploadDBMeter;
   private Meter userDownloadMeter;
   private Meter azDownloadMeter;
+  private Meter dbConnectionMeter;
 
   private static final Logger logger = Logger.getLogger(CommonMetrics.class);
 
@@ -70,6 +71,24 @@ public enum CommonMetrics implements EventListener {
 
   }
 
+  /*
+   * This method must be synchronized since web server and executor call
+   * this method simultaneously.
+   */
+  public synchronized void registerCommonMetrics(MetricRegistry metrics) {
+    if(dbConnectionMeter == null) {
+      dbConnectionMeter = metrics.meter("DB-Connection-meter");
+
+      metrics.register("DB-Connection-Num-meter", new Gauge<Double>() {
+        @Override
+        public Double getValue() {
+          return dbConnectionMeter.getOneMinuteRate();
+        }
+      });
+    }
+  }
+
+
   @Override
   public synchronized void handleEvent(Event event) {
 
@@ -79,16 +98,12 @@ public enum CommonMetrics implements EventListener {
      */
     if (event.getType() == Event.Type.UPLOAD_FILE_CHUNK) {
       uploadDBMeter.mark();
-      logger.info("[[[]]] uploadDBMeter count =" + uploadDBMeter.getCount());
-      logger.info("[[[]]] uploadDBMeter getOneMinuteRate =" + uploadDBMeter.getOneMinuteRate());
     } else if (event.getType() == Event.Type.USER_DOWNLOAD_FILE) {
       userDownloadMeter.mark();
-      logger.info("[[[]]] userDownloadMeter count =" + userDownloadMeter.getCount());
-      logger.info("[[[]]] userDownloadMeter getOneMinuteRate =" + userDownloadMeter.getOneMinuteRate());
     } else if (event.getType() == Event.Type.AZ_DOWNLOAD_FILE) {
       azDownloadMeter.mark();
-      logger.info("[[[]]] AZDownloadMeter count =" + azDownloadMeter.getCount());
-      logger.info("[[[]]] AZDownloadMeter getOneMinuteRate =" + azDownloadMeter.getOneMinuteRate());
+    } else if (event.getType() == Event.Type.DB_CONNECTION && dbConnectionMeter != null) {
+      dbConnectionMeter.mark();
     }
   }
 

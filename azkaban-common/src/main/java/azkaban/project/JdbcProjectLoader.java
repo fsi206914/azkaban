@@ -18,6 +18,7 @@ package azkaban.project;
 
 import azkaban.event.Event;
 import azkaban.event.EventListener;
+import azkaban.event.MultitonListenerSet;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -65,7 +66,6 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements EventHandle
   private File tempDir;
 
   private EncodingType defaultEncodingType = EncodingType.GZIP;
-  private static HashSet<EventListener> listeners = new HashSet<>();
 
   public JdbcProjectLoader(Props props) {
     super(props);
@@ -73,11 +73,10 @@ public class JdbcProjectLoader extends AbstractJdbcLoader implements EventHandle
     if (!tempDir.exists()) {
       tempDir.mkdirs();
     }
-    addListener(CommonMetrics.INSTANCE);
   }
 
   public HashSet<EventListener> getListeners() {
-    return listeners;
+    return MultitonListenerSet.getInstance(MultitonListenerSet.ListenerType.COMMON, CommonMetrics.INSTANCE).getListeners();
   }
 
   @Override

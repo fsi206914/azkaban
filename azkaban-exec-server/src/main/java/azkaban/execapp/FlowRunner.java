@@ -16,6 +16,7 @@
 
 package azkaban.execapp;
 
+import azkaban.event.MultitonListenerSet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -128,8 +129,6 @@ public class FlowRunner implements EventHandler, Runnable {
   // The following is state that will trigger a retry of all failed jobs
   private boolean retryFailedJobs = false;
 
-  private static HashSet<EventListener> listeners = new HashSet<>();
-
   /**
    * Constructor. This will create its own ExecutorService for thread pools
    *
@@ -199,7 +198,7 @@ public class FlowRunner implements EventHandler, Runnable {
   }
 
   public HashSet<EventListener> getListeners() {
-    return listeners;
+    return MultitonListenerSet.getInstance(MultitonListenerSet.ListenerType.EXEC, MetricsExecListener.INSTANCE).getListeners();
   }
 
   public File getExecutionDir() {
