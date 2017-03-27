@@ -346,4 +346,15 @@ $(function() {
     slaView.show();
   });
   */
+
+
+  $('.show-and-hide-content').click(function () {
+    if ($('input.select-yes:checked').prop('checked')) {
+      console.log("access2");
+      $('.show-and-hide-true').show('slideToggle');
+    }
+    else{
+      $('.show-and-hide-true').hide('slideToggle');
+    }
+  });
 });
