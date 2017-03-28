@@ -35,7 +35,7 @@ function addNote(type, message, url) {
   $.post(triggerURL, requestData, successHandler, "json");
 }
 
-function removeNote(scheduleId) {
+function removeNote() {
   var scheduleURL = contextURL + "/triggers"
   var redirectURL = contextURL + "/triggers"
   var requestData = {"ajax": "removeNote"};
@@ -369,15 +369,10 @@ $(function() {
     var message = $('#message').val();
     var url = $('#url').val();
 
-    console.log("form submission")
-    //if(radioValue != "Countdown")
-    addNote(radioValue, message, url);
-    console.log("after form submission")
-    // else {
-    //  var time =  $('#firstName').val();
-    // addNote(radioValue, time, url);
-    //}
+    if(radioValue == "Countdown")
+      message =  $('#firstName').val();
 
+    console.log("message = " + message)
     var type = radioValue;
     var triggerURL = contextURL + "/triggers";
     var redirectURL = contextURL + "/triggers";
@@ -398,4 +393,22 @@ $(function() {
 
   });
 
+  $("#buttonid2").click(function(){
+
+    console.log("form clear")
+    var requestData = {"ajax": "removeNote"};
+    var triggerURL = contextURL + "/triggers";
+    var redirectURL = contextURL + "/triggers";
+    var successHandler = function(data) {
+      if (data.error) {
+        //alert(data.error)
+        $('#errorMsg').text(data.error);
+      }
+      else {
+        window.location = redirectURL;
+      }
+    };
+    $.post(triggerURL, requestData, successHandler, "json");
+
+  });
 });

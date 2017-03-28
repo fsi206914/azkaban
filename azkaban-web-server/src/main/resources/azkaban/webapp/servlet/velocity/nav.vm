@@ -28,7 +28,7 @@
     font-weight: bold;
   }
 </style>
-
+<script type="text/javascript" src="${context}/js/jquery.countdown.js" ></script>
 <script type="text/javascript">
   function navMenuClick(url) {
     window.location.href = url;
@@ -38,15 +38,38 @@
 
     if( $("#banner").data("id").indexOf('$') == -1  && $('#banner').is(':empty') == false) {
 
+      $('#banner').attr('Target', '_blank');
       $("#banner").on("click", function(){
-        window.open($("#banner").data("url"), '_newtab');
+        window.open($("#banner").data("url"));
       });
 
       $("#banner").slideDown(function()  {
 
-        $('#bannerText').append('<img ' + 'src=' + '"images/caution.png"' + ' width="50" height="50" ' + ' style=' + '"display:inline;" >' + ' </img>');
-        $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("id") + ":    " + '</span>');
-        $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("message") + '</span>');
+        if($("#banner").data("id") == "Warning") {
+          $('#bannerText').append('<img ' + 'src=' + '"images/caution.png"' + ' width="50" height="50" ' + ' style=' + '"display:inline;" >' + ' </img>');
+          $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("message") + '</span>');
+        } else if ($("#banner").data("id") == "Action Required") {
+          $('#bannerText').append('<img ' + 'src=' + '"images/action.png"' + ' width="50" height="50" ' + ' style=' + '"display:inline;" >' + ' </img>');
+          $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("id") + ":    " + '</span>');
+          $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("message") + '</span>');
+        } else {
+          $('#bannerText').append('<img ' + 'src=' + '"images/countdown.png"' + ' width="50" height="50" ' + ' style=' + '"display:inline;" >' + ' </img>');
+          $('#bannerText').append('<span style="font-size: 150%;" >' + "The maintenance time count down: " + '</span>');
+          $('#bannerText').append('<span id="clock" style="font-size: 150%;">' + '</span>');
+          console.log("---- time = " + $("#banner").data("message"));
+          $('#clock').countdown($("#banner").data("message"))
+              .on('update.countdown', function(event) {
+                var format = '%H:%M:%S';
+                if(event.offset.totalDays > 0) {
+                  format = '%-d day%!d ' + format;
+                }
+                if(event.offset.weeks > 0) {
+                  format = '%-w week%!w ' + format;
+                }
+                $(this).html(event.strftime(format));
+              });
+        }
+
 
 //        $("#bannerText").append($("#banner").data("message"));
         setTimeout(function() {

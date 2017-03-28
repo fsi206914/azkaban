@@ -145,7 +145,7 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
     type = null;
     message= null;
     url = null;
-
+    logger.info("removing note ========");
     ret.put("status", "success");
     return;
   }

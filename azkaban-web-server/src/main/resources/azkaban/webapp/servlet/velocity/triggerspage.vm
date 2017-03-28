@@ -73,7 +73,7 @@
           </div>
           <div class="col-sm-4">
             <label class="radio-inline">
-              <input type="radio" id="maleRadio" name='foo' value="Action Requied">Action Required
+              <input type="radio" id="maleRadio" name='foo' value="Action Required">Action Required
             </label>
           </div>
           <div class="col-sm-4">
@@ -106,7 +106,10 @@
     </div>
     <div class="form-group">
       <div class="col-sm-3 col-sm-offset-3">
-        <button type="submit" id="buttonid" class="btn btn-primary btn-block">Submit</button>
+        <button type="submit" id="buttonid" class="btn btn-primary btn-block">Submit Note</button>
+      </div>
+      <div class="col-sm-2 col-sm-offset-4">
+        <button type="submit" id="buttonid2" class="btn btn-warning btn-block">Clear Note</button>
       </div>
     </div>
   </form> <!-- /form -->
