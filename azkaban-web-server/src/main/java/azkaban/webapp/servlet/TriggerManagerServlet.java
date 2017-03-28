@@ -41,6 +41,10 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
       .getLogger(TriggerManagerServlet.class);
   private TriggerManager triggerManager;
 
+  public static String type = null;
+  public static String message = null;
+  public static String url= null;
+
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
@@ -67,6 +71,10 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
     try {
       if (ajaxName.equals("expireTrigger")) {
         ajaxExpireTrigger(req, ret, session.getUser());
+      } else if (ajaxName.equals("addNote")) {
+        ajaxAddNotes(req, ret, session.getUser());
+      } else {
+        ajaxRemoveNotes(req, ret, session.getUser());
       }
     } catch (Exception e) {
       ret.put("error", e.getMessage());
@@ -115,6 +123,29 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
 
     ret.put("status", "success");
     ret.put("message", "trigger " + triggerId + " removed from Schedules.");
+    return;
+  }
+
+  private void ajaxAddNotes(HttpServletRequest req,
+      Map<String, Object> ret, User user) throws ServletException,
+                                                 TriggerManagerException {
+    type = getParam(req, "type");
+    message= getParam(req, "message");
+    url = getParam(req, "url");
+
+    logger.info(" ======= access ajax AddNodetes");
+    ret.put("status", "success");
+    return;
+  }
+
+  private void ajaxRemoveNotes(HttpServletRequest req,
+      Map<String, Object> ret, User user) throws ServletException,
+                                                 TriggerManagerException {
+    type = null;
+    message= null;
+    url = null;
+
+    ret.put("status", "success");
     return;
   }
 

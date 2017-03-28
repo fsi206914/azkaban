@@ -88,20 +88,20 @@
     <div class="form-group show-and-hide-true">
       <label class="control-label col-sm-3"></label>
       <div class="col-sm-6">
-        <input type="text" id="firstName" placeholder="Message2" class="form-control" autofocus>
+        <input type="text" id="firstName" placeholder="Time" class="form-control" autofocus>
       </div>
     </div>
 
     <div class="form-group">
       <label for="firstName" class="col-sm-3 control-label">Message: </label>
       <div class="col-sm-6">
-        <input type="text" id="firstName" placeholder="Message" class="form-control" autofocus>
+        <input type="text" id="message" placeholder="Message" class="form-control" autofocus>
       </div>
     </div>
     <div class="form-group">
       <label for="email" class="col-sm-3 control-label">Redirect</label>
       <div class="col-sm-9">
-        <input type="email" id="email" placeholder="URL" class="form-control">
+        <input type="text" id="url" placeholder="URL" class="form-control">
       </div>
     </div>
     <div class="form-group">

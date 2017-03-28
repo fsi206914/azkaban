@@ -16,34 +16,32 @@
 
 $.namespace('azkaban');
 
-function expireTrigger(triggerId) {
+function addNote(type, message, url) {
   var triggerURL = contextURL + "/triggers"
   var redirectURL = contextURL + "/triggers"
-  var requestData = {"ajax": "expireTrigger", "triggerId": triggerId};
+  var requestData = {"ajax": "addNote", "type": type, "message": message, "url": url};
   var successHandler = function(data) {
     if (data.error) {
       //alert(data.error)
       $('#errorMsg').text(data.error);
     }
     else {
-      //alert("Schedule "+schedId+" removed!")
       window.location = redirectURL;
     }
   };
   $.post(triggerURL, requestData, successHandler, "json");
 }
 
-function removeSched(scheduleId) {
-  var scheduleURL = contextURL + "/schedule"
-  var redirectURL = contextURL + "/schedule"
-  var requestData = {"action": "removeSched", "scheduleId": scheduleId};
+function removeNote(scheduleId) {
+  var scheduleURL = contextURL + "/triggers"
+  var redirectURL = contextURL + "/triggers"
+  var requestData = {"action": "removeNote"};
   var successHandler = function(data) {
     if (data.error) {
       //alert(data.error)
       $('#errorMsg').text(data.error);
     }
     else {
-      //alert("Schedule "+schedId+" removed!")
       window.location = redirectURL;
     }
   };
@@ -338,15 +336,6 @@ $(function() {
 
   slaView = new azkaban.ChangeSlaView({el:$('#sla-options')});
   tableSorterView = new azkaban.TableSorter({el:$('#scheduledFlowsTbl')});
-  /*
-  var requestURL = contextURL + "/manager";
-
-  // Set up the Flow options view. Create a new one every time :p
-  $('#addSlaBtn').click( function() {
-    slaView.show();
-  });
-  */
-
 
   $('.show-and-hide-content').click(function () {
     if ($('input.select-yes:checked').prop('checked')) {
@@ -357,4 +346,14 @@ $(function() {
       $('.show-and-hide-true').hide('slideToggle');
     }
   });
+
+  $('.form-horizontal').submit(function(event) {
+    var radioValue = $("input[name='foo']:checked").val();
+    var message = $('#message').val();
+    var url = $('#url').val();
+
+    addNote(radioValue, message, url);
+    event.preventDefault();
+  });
+
 });

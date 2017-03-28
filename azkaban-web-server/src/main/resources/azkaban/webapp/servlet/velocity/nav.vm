@@ -14,11 +14,35 @@
  * the License.
 *#
 
+<style type="text/css">
+  #banner {
+    width: 100%;
+    background: orange;
+    height: 50px;
+    position: float;
+    top: 0;
+    display: none;
+    left: 0;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+  }
+</style>
+
 <script type="text/javascript">
       function navMenuClick(url) {
         window.location.href = url;
       }
+      $(function(){
+        $("#banner").slideDown(function()  {
+          setTimeout(function() {
+            $("#banner").slideUp();
+          }, 5000); //side up after 5 seconds
+        });
+      });
 </script>
+<div id='banner'>HELLO THERE!</div>
+
 <div class="navbar navbar-inverse navbar-static-top">
     <div class="container-full">
         <div class="navbar-header">
