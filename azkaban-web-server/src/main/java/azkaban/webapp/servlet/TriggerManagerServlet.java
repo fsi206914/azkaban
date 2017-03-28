@@ -69,6 +69,7 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
     String ajaxName = getParam(req, "ajax");
 
     try {
+      logger.info("access handle AJAX Action.");
       if (ajaxName.equals("expireTrigger")) {
         ajaxExpireTrigger(req, ret, session.getUser());
       } else if (ajaxName.equals("addNote")) {
@@ -133,7 +134,7 @@ public class TriggerManagerServlet extends LoginAbstractAzkabanServlet {
     message= getParam(req, "message");
     url = getParam(req, "url");
 
-    logger.info(" ======= access ajax AddNodetes");
+    logger.info(" ======= access ajax AddNodetes" + type + "  " + message + "  " + url);
     ret.put("status", "success");
     return;
   }

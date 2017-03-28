@@ -17,9 +17,11 @@
 $.namespace('azkaban');
 
 function addNote(type, message, url) {
-  var triggerURL = contextURL + "/triggers"
-  var redirectURL = contextURL + "/triggers"
+  var triggerURL = contextURL + "/triggers";
+  var redirectURL = contextURL + "/triggers";
   var requestData = {"ajax": "addNote", "type": type, "message": message, "url": url};
+  console.log("===== before success Handler=======");
+
   var successHandler = function(data) {
     if (data.error) {
       //alert(data.error)
@@ -29,13 +31,14 @@ function addNote(type, message, url) {
       window.location = redirectURL;
     }
   };
+  console.log("===== before post =======");
   $.post(triggerURL, requestData, successHandler, "json");
 }
 
 function removeNote(scheduleId) {
   var scheduleURL = contextURL + "/triggers"
   var redirectURL = contextURL + "/triggers"
-  var requestData = {"action": "removeNote"};
+  var requestData = {"ajax": "removeNote"};
   var successHandler = function(data) {
     if (data.error) {
       //alert(data.error)
@@ -347,13 +350,52 @@ $(function() {
     }
   });
 
-  $('.form-horizontal').submit(function(event) {
+  // $('.form-horizontal').submit(function(event) {
+  //   var radioValue = $("input[name='foo']:checked").val();
+  //   var message = $('#message').val();
+  //   var url = $('#url').val();
+  //
+  //   console.log("form submission")
+  //   //if(radioValue != "Countdown")
+  //     addNote(radioValue, message, url);
+  //  // else {
+  //   //  var time =  $('#firstName').val();
+  //    // addNote(radioValue, time, url);
+  //   //}
+  // });
+
+  $("#buttonid").click(function(){
     var radioValue = $("input[name='foo']:checked").val();
     var message = $('#message').val();
     var url = $('#url').val();
 
+    console.log("form submission")
+    //if(radioValue != "Countdown")
     addNote(radioValue, message, url);
-    event.preventDefault();
+    console.log("after form submission")
+    // else {
+    //  var time =  $('#firstName').val();
+    // addNote(radioValue, time, url);
+    //}
+
+    var type = radioValue;
+    var triggerURL = contextURL + "/triggers";
+    var redirectURL = contextURL + "/triggers";
+    var requestData = {"ajax": "addNote", "type": type, "message": message, "url": url};
+    console.log("===== before success Handler=======");
+
+    var successHandler = function(data) {
+      if (data.error) {
+        //alert(data.error)
+        $('#errorMsg').text(data.error);
+      }
+      else {
+        window.location = redirectURL;
+      }
+    };
+    console.log("===== before post =======");
+    $.post(triggerURL, requestData, successHandler, "json");
+
   });
 
 });

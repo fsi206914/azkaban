@@ -18,30 +18,51 @@
   #banner {
     width: 100%;
     background: orange;
-    height: 50px;
+    height: 70px;
     position: float;
     top: 0;
     display: none;
     left: 0;
     text-align: center;
-    line-height: 50px;
+    line-height: 70px;
     font-weight: bold;
   }
 </style>
 
 <script type="text/javascript">
-      function navMenuClick(url) {
-        window.location.href = url;
-      }
-      $(function(){
-        $("#banner").slideDown(function()  {
-          setTimeout(function() {
-            $("#banner").slideUp();
-          }, 5000); //side up after 5 seconds
-        });
+  function navMenuClick(url) {
+    window.location.href = url;
+  }
+
+  $(function(){
+
+    if( $("#banner").data("id").indexOf('$') == -1  && $('#banner').is(':empty') == false) {
+
+      $("#banner").on("click", function(){
+        window.open($("#banner").data("url"), '_newtab');
       });
+
+      $("#banner").slideDown(function()  {
+
+        $('#bannerText').append('<img ' + 'src=' + '"images/caution.png"' + ' width="50" height="50" ' + ' style=' + '"display:inline;" >' + ' </img>');
+        $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("id") + ":    " + '</span>');
+        $('#bannerText').append('<span style="font-size: 150%;" >' + $("#banner").data("message") + '</span>');
+
+//        $("#bannerText").append($("#banner").data("message"));
+        setTimeout(function() {
+          $("#banner").slideUp();
+        }, 30000); //side up after 5 seconds
+      });
+    }
+
+  });
+
 </script>
-<div id='banner'>HELLO THERE!</div>
+<div id='banner' data-id="$note_type" data-message="$note_message" data-url="$note_url" >
+  <div id="bannerText">
+##    <img src="images/caution.png"  width="40" height="40" style="display:inline;">
+  </div>
+</div>
 
 <div class="navbar navbar-inverse navbar-static-top">
     <div class="container-full">

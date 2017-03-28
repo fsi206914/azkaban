@@ -16,6 +16,7 @@
 
 package azkaban.webapp.servlet;
 
+import azkaban.trigger.TriggerManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -329,6 +330,11 @@ public abstract class AbstractAzkabanServlet extends HttpServlet {
     page.add("azkaban_name", name);
     page.add("azkaban_label", label);
     page.add("azkaban_color", color);
+
+    page.add("note_type", TriggerManagerServlet.type);
+    page.add("note_message", TriggerManagerServlet.message);
+    page.add("note_url", TriggerManagerServlet.url);
+
     page.add("utils", utils);
     page.add("timezone", TimeZone.getDefault().getID());
     page.add("currentTime", (new DateTime()).getMillis());
@@ -380,6 +386,11 @@ public abstract class AbstractAzkabanServlet extends HttpServlet {
     page.add("azkaban_name", name);
     page.add("azkaban_label", label);
     page.add("azkaban_color", color);
+
+    page.add("note_type", TriggerManagerServlet.type);
+    page.add("note_message", TriggerManagerServlet.message);
+    page.add("note_url", TriggerManagerServlet.url);
+
     page.add("timezone", TimeZone.getDefault().getID());
     page.add("currentTime", (new DateTime()).getMillis());
     page.add("context", req.getContextPath());
