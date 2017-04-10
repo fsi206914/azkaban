@@ -16,10 +16,46 @@
 
 package azkaban.database;
 
+import azkaban.utils.Props;
+import java.sql.SQLException;
+import java.sql.Connection;
+import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp.SQLNestedException;
+
 
 public abstract class AzkabanDataSource extends BasicDataSource {
+
+  private AzkabanDataSource dataSource;
+  private Props props;
+
   public abstract boolean allowsOnDuplicateKey();
 
   public abstract String getDBType();
+
+  public AzkabanDataSource(Props props) {
+    this.dataSource = DataSourceUtils.getDataSource(props);
+  }
+
+  @Override
+  public Connection getConnection() throws SQLException, SQLNestedException {
+
+    if (getDataSource() == null) {
+      return createDataSource().getConnection();
+    }
+
+    Connection connection = null;
+    try {
+
+    } catch (Exception ex) {
+      DataSourceUtils.getDataSource(props);
+    }
+
+    return connection;
+  }
+
+
+  public DataSource getDataSource() {
+    return dataSource;
+  }
 }
