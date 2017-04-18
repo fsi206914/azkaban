@@ -15,12 +15,11 @@
  *
  */
 
-include 'azkaban-spi'
-include 'azkaban-db'
-include 'azkaban-common'
-include 'azkaban-exec-server'
-include 'azkaban-hadoop-security-plugin'
-include 'azkaban-solo-server'
-include 'azkaban-sql'
-include 'azkaban-web-server'
-include 'azkaban-test'
+dependencies {
+  compile project(':azkaban-spi')
+
+  compile('commons-dbutils:commons-dbutils:1.5')
+  compile('org.apache.commons:commons-dbcp2:2.1.1')
+
+  testRuntime('com.h2database:h2:1.4.193')
+}
