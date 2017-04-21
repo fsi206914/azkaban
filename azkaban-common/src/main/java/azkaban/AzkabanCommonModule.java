@@ -16,6 +16,8 @@
  */
 package azkaban;
 
+import azkaban.db.*;
+
 import azkaban.project.JdbcProjectLoader;
 import azkaban.project.ProjectLoader;
 import azkaban.spi.Storage;
@@ -57,6 +59,7 @@ public class AzkabanCommonModule extends AbstractModule {
     bind(ProjectLoader.class).to(JdbcProjectLoader.class).in(Scopes.SINGLETON);
     bind(Props.class).toInstance(props);
     bind(Storage.class).to(resolveStorageClassType()).in(Scopes.SINGLETON);
+    bind(AzBaseDAO.class).to(AzDBImpl.class).in(Scopes.SINGLETON);
   }
 
   public Class<? extends Storage> resolveStorageClassType() {

@@ -14,11 +14,8 @@
  * the License.
  *
  */
-package com.linkedin.azkaban.db;
+package azkaban.db;
 
-import java.sql.SQLException;
-
-@FunctionalInterface
-public interface SQLSupplier<T, V extends Throwable> {
-  public T execute() throws V;
+public class Util {
+  public static final int MAX_DB_RETRY_COUNT = 5;
 }

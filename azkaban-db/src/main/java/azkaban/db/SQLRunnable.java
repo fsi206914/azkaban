@@ -14,12 +14,12 @@
  * the License.
  *
  */
-package com.linkedin.azkaban.db;
+package azkaban.db;
 
 import java.sql.SQLException;
 
 @FunctionalInterface
-public interface SQLRunnable<AzkabanDataSourceT> {
-  public void execute() throws SQLException;
+public interface SQLRunnable<V extends Throwable> {
+  public void execute() throws V;
 
 }

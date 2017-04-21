@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.linkedin.azkaban.db;
+package azkaban.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
