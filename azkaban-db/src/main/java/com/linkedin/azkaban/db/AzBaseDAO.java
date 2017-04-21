@@ -18,7 +18,9 @@ package com.linkedin.azkaban.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.logging.LogConfigurationException;
 
 
 public interface AzBaseDAO {
@@ -26,18 +28,17 @@ public interface AzBaseDAO {
   /**
    * Creates the given object in the data store.
    *
-   * @param conn Database Connection
    * @return the last inserted id in mysql per connection.
    * @throws SQLException if persistence errors occur while executing the operation
    */
-  public Long getLastInsertId(Connection conn) throws Exception;
+  public Long getLastInsertId() throws Exception;
 
   public <T, V extends Throwable> T query(String baseQuery, ResultSetHandler<T> resultHandler,
-      String exceptionMessage, Class<V> callerExceptionClass) throws V;
+      String exceptionMessage, Class<V> callerExceptionClass, Object... params) throws V;
 
-  public <T, V extends Throwable> T transaction(SQLSupplier<T> operations, String exceptionMessage,
+  public <T, V extends Throwable> T transaction(SQLSupplier<T, V> operations, String exceptionMessage,
       Class<V> callerExceptionClass) throws V;
 
   public <V extends Throwable> void update(String updateClause, String exceptionMessage,
-      Class<V> callerExceptionClass) throws V;
+      Class<V> callerExceptionClass, Object...param) throws V;
 }
