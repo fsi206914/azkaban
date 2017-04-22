@@ -17,6 +17,7 @@
 package azkaban.project;
 
 import azkaban.database.AbstractJdbcLoader;
+import azkaban.db.AzBaseDAO;
 import azkaban.flow.Flow;
 import azkaban.project.ProjectLogEvent.EventType;
 import azkaban.user.Permission;
@@ -28,6 +29,7 @@ import azkaban.utils.Pair;
 import azkaban.utils.Props;
 import azkaban.utils.PropsUtils;
 import azkaban.utils.Triple;
+import com.google.inject.Inject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -61,8 +63,12 @@ public class JdbcProjectImpl extends AbstractJdbcLoader implements
 
   private EncodingType defaultEncodingType = EncodingType.GZIP;
 
-  public JdbcProjectImpl(Props props) {
+  private final AzBaseDAO azBaseDAO;
+
+  @Inject
+  public JdbcProjectImpl(AzBaseDAO azBaseDAO, Props props) {
     super(props);
+    this.azBaseDAO = azBaseDAO;
     tempDir = new File(props.getString("project.temp.dir", "temp"));
     if (!tempDir.exists()) {
       tempDir.mkdirs();
@@ -90,9 +96,11 @@ public class JdbcProjectImpl extends AbstractJdbcLoader implements
     ProjectResultHandler handler = new ProjectResultHandler();
     List<Project> projects = null;
     try {
-      projects =
-          runner.query(connection,
-              ProjectResultHandler.SELECT_ALL_ACTIVE_PROJECTS, handler);
+//      projects =
+//          runner.query(connection,
+//              ProjectResultHandler.SELECT_ALL_ACTIVE_PROJECTS, handler);
+
+      projects = azBaseDAO.query(ProjectResultHandler.SELECT_ALL_ACTIVE_PROJECTS, handler, "wode maya", SQLException.class);
 
       for (Project project : projects) {
         List<Triple<String, Boolean, Permission>> permissions =

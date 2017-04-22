@@ -16,8 +16,10 @@
  */
 package azkaban;
 
+import azkaban.database.DataSourceUtils;
 import azkaban.db.*;
 
+import azkaban.project.JdbcProjectImpl;
 import azkaban.project.JdbcProjectLoader;
 import azkaban.project.ProjectLoader;
 import azkaban.spi.Storage;
@@ -32,6 +34,7 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import java.io.File;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import static azkaban.storage.StorageImplementationType.*;
 
@@ -49,17 +52,21 @@ public class AzkabanCommonModule extends AbstractModule {
    */
   private final String storageImplementation;
 
+  private final AzkabanDataSource dataSource;
+
   public AzkabanCommonModule(Props props) {
     this.props = props;
     this.storageImplementation = props.getString(Constants.ConfigurationKeys.AZKABAN_STORAGE_TYPE, LOCAL.name());
+    this.dataSource = getDataSource(props);
   }
 
   @Override
   protected void configure() {
-    bind(ProjectLoader.class).to(JdbcProjectLoader.class).in(Scopes.SINGLETON);
+    bind(ProjectLoader.class).to(JdbcProjectImpl.class).in(Scopes.SINGLETON);
     bind(Props.class).toInstance(props);
     bind(Storage.class).to(resolveStorageClassType()).in(Scopes.SINGLETON);
     bind(AzBaseDAO.class).to(AzDBImpl.class).in(Scopes.SINGLETON);
+    bind(AzkabanDataSource.class).toInstance(dataSource);
   }
 
   public Class<? extends Storage> resolveStorageClassType() {
@@ -83,5 +90,21 @@ public class AzkabanCommonModule extends AbstractModule {
   public @Provides
   LocalStorage createLocalStorage(StorageConfig config) {
     return new LocalStorage(new File(config.getBaseDirectoryPath()));
+  }
+
+  public static AzkabanDataSource getDataSource(Props props) {
+    String databaseType = props.getString("database.type");
+
+    AzkabanDataSource dataSource = null;
+    int port = props.getInt("mysql.port");
+    String host = props.getString("mysql.host");
+    String database = props.getString("mysql.database");
+    String user = props.getString("mysql.user");
+    String password = props.getString("mysql.password");
+    int numConnections = props.getInt("mysql.numconnections");
+
+    return MySQLDataSource.getInstance(host, port, database, user, password,
+            numConnections);
+
   }
 }

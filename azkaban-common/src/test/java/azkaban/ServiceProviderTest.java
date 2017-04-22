@@ -28,6 +28,7 @@ import com.google.inject.Injector;
 import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static azkaban.ServiceProvider.*;
@@ -43,7 +44,7 @@ public class ServiceProviderTest {
     FileUtils.deleteDirectory(new File(AZKABAN_LOCAL_TEST_STORAGE));
   }
 
-  @Test
+  @Ignore @Test
   public void testInjections() throws Exception {
     Props props = new Props();
     props.put("database.type", "h2");

@@ -16,6 +16,7 @@
 
 package azkaban.project;
 
+import azkaban.ServiceProvider;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ import azkaban.user.User;
 import azkaban.utils.Props;
 import azkaban.utils.PropsUtils;
 import azkaban.utils.Utils;
+import azkaban.AzkabanCommonModule;
+import com.google.inject.Guice;
 
 public class ProjectManager {
   private static final Logger logger = Logger.getLogger(ProjectManager.class);
@@ -56,6 +59,8 @@ public class ProjectManager {
   public ProjectManager(ProjectLoader loader, Props props) {
     this.projectLoader = loader;
     this.props = props;
+    ServiceProvider.SERVICE_PROVIDER.setInjector(Guice.createInjector(new AzkabanCommonModule(props)));
+
     this.tempDir = new File(this.props.getString("project.temp.dir", "temp"));
     this.projectVersionRetention =
         (props.getInt("project.version.retention", 3));
@@ -83,7 +88,8 @@ public class ProjectManager {
 
   public void loadAllProjectFlows(Project project) {
     try {
-      List<Flow> flows = projectLoader.fetchAllProjectFlows(project);
+      ProjectLoader loader = ServiceProvider.SERVICE_PROVIDER.getInstance(ProjectLoader.class);
+      List<Flow> flows = loader.fetchAllProjectFlows(project);
       Map<String, Flow> flowMap = new HashMap<String, Flow>();
       for (Flow flow : flows) {
         flowMap.put(flow.getId(), flow);
@@ -149,7 +155,8 @@ public class ProjectManager {
   public List<Project> getProjects() {
     List<Project> projects;
     try {
-      projects = projectLoader.fetchAllActiveProjects();
+      ProjectLoader loader = ServiceProvider.SERVICE_PROVIDER.getInstance(ProjectLoader.class);
+      projects = loader.fetchAllActiveProjects();
     } catch (ProjectManagerException e) {
       throw new RuntimeException("Could not load projects from store.", e);
     }

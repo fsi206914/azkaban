@@ -23,19 +23,50 @@ import org.apache.commons.dbutils.ResultSetHandler;
 public interface AzBaseDAO {
 
   /**
-   * Creates the given object in the data store.
+   * returns the last id from a previous insert statement.
    *
    * @return the last inserted id in mysql per connection.
    * @throws SQLException if persistence errors occur while executing the operation
    */
-  public Long getLastInsertId() throws Exception;
+  public Long getLastInsertId() throws SQLException;
 
+  /**
+   *
+   * @param baseQuery The SQL statement to execute.
+   * @param resultHandler The handler used to create the result object
+   * @param exceptionMessage the exception message to be delivered
+   * @param callerExceptionClass the exception class type to be thrown
+   * @param params
+   * @param <T> The type of object that the qeury handler returns
+   * @param <V>
+   * @return The object returned by the handler.
+   * @throws V
+   */
   public <T, V extends Throwable> T query(String baseQuery, ResultSetHandler<T> resultHandler,
-      String exceptionMessage, Class<V> callerExceptionClass, Object... params) throws V;
+      String exceptionMessage, Class<V> callerExceptionClass, Object...params) throws V;
 
+  /**
+   *
+   * @param operations
+   * @param exceptionMessage
+   * @param callerExceptionClass
+   * @param <T>
+   * @param <V>
+   * @return
+   * @throws V
+   */
   public <T, V extends Throwable> T transaction(SQLSupplier<T, V> operations, String exceptionMessage,
       Class<V> callerExceptionClass) throws V;
 
+  /**
+   *
+   * @param updateClause
+   * @param exceptionMessage
+   * @param callerExceptionClass
+   * @param param
+   * @param <V>
+   * @throws V
+   */
   public <V extends Throwable> void update(String updateClause, String exceptionMessage,
       Class<V> callerExceptionClass, Object...param) throws V;
 }
