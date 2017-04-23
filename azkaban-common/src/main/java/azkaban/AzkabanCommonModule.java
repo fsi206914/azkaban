@@ -16,10 +16,9 @@
  */
 package azkaban;
 
-import azkaban.database.DataSourceUtils;
 import azkaban.db.*;
 
-import azkaban.project.JdbcProjectImpl;
+//import azkaban.project.JdbcProjectImpl;
 import azkaban.project.JdbcProjectLoader;
 import azkaban.project.ProjectLoader;
 import azkaban.spi.Storage;
@@ -27,14 +26,14 @@ import azkaban.spi.StorageException;
 import azkaban.storage.LocalStorage;
 import azkaban.storage.StorageConfig;
 import azkaban.storage.StorageImplementationType;
+import azkaban.trigger.JdbcTriggerImpl;
+import azkaban.trigger.TriggerLoader;
 import azkaban.utils.Props;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import com.google.inject.Singleton;
 import java.io.File;
-import org.apache.commons.dbcp2.BasicDataSource;
 
 import static azkaban.storage.StorageImplementationType.*;
 
@@ -62,10 +61,11 @@ public class AzkabanCommonModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(ProjectLoader.class).to(JdbcProjectImpl.class).in(Scopes.SINGLETON);
+    bind(ProjectLoader.class).to(JdbcProjectLoader.class).in(Scopes.SINGLETON);
+    bind(TriggerLoader.class).to(JdbcTriggerImpl.class).in(Scopes.SINGLETON);
     bind(Props.class).toInstance(props);
     bind(Storage.class).to(resolveStorageClassType()).in(Scopes.SINGLETON);
-    bind(AzBaseDAO.class).to(AzDBImpl.class).in(Scopes.SINGLETON);
+    bind(AzDBOperator.class).to(AzDBOperatorImpl.class).in(Scopes.SINGLETON);
     bind(AzkabanDataSource.class).toInstance(dataSource);
   }
 

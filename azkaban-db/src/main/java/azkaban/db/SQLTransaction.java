@@ -16,9 +16,10 @@
  */
 package azkaban.db;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 @FunctionalInterface
-public interface SQLSupplier<T, V extends Throwable> {
-  public T execute() throws V;
+public interface SQLTransaction<T, V extends Throwable> {
+  public T execute(Connection conn) throws V;
 }

@@ -68,12 +68,12 @@ public class MySQLDataSource extends AzkabanDataSource {
   @Override
   public synchronized Connection getConnection() throws SQLException {
 
-      /**
-       * getInitialSize() returns the initial size of the connection pool.
-       *
-       * Note: The connection pool is only initialized the first time one of the
-       * following methods is invoked: <code>getConnection, setLogwriter,
-       * setLoginTimeout, getLoginTimeout, getLogWriter.</code>
+      /*
+        getInitialSize() returns the initial size of the connection pool.
+
+        Note: The connection pool is only initialized the first time one of the
+        following methods is invoked: <code>getConnection, setLogwriter,
+        setLoginTimeout, getLoginTimeout, getLogWriter.</code>
        */
     if (getInitialSize() == 0) {
       return createDataSource().getConnection();
@@ -81,7 +81,7 @@ public class MySQLDataSource extends AzkabanDataSource {
 
     Connection connection = null;
     int retryAttempt = 0;
-    while (connection == null && retryAttempt < Util.MAX_DB_RETRY_COUNT) {
+    while (retryAttempt < Util.MAX_DB_RETRY_COUNT) {
       try {
           /*
            * when DB connection could not be fetched here, dbcp library will keep searching until a timeout defined in
@@ -96,12 +96,7 @@ public class MySQLDataSource extends AzkabanDataSource {
         retryAttempt ++;
       }
     }
-    return connection;
-  }
-
-  @Override
-  public boolean allowsOnDuplicateKey() {
-    return true;
+    return null;
   }
 
   @Override
