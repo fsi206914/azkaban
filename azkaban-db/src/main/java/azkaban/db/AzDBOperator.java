@@ -16,6 +16,7 @@
  */
 package azkaban.db;
 
+import java.sql.SQLException;
 import org.apache.commons.dbutils.ResultSetHandler;
 
 /**
@@ -40,40 +41,32 @@ public interface AzDBOperator {
    *
    * @param baseQuery The SQL query statement to execute.
    * @param resultHandler The handler used to create the result object
-   * @param exceptionWrapper the exception message and type to be thrown if needed
    * @param params Initialize the PreparedStatement's IN parameters
    * @param <T> The type of object that the qeury handler returns
-   * @param <V> The Exception class type
    * @return The object returned by the handler.
-   * @throws V Expected Exception type specified by the caller
+   * @throws SQLException
    */
-  <T, V extends Throwable> T query(String baseQuery,
+  <T> T query(String baseQuery,
       ResultSetHandler<T> resultHandler,
-      AzDBExceptionWrapper<V> exceptionWrapper,
-      Object...params) throws V;
+      Object...params) throws SQLException;
 
   /**
    *
    * @param operations A collection of DB operations
-   * @param exceptionWrapper the exception message and type to be thrown if needed
    * @param <T> The type of object that the operations returns. Note that T could be null
-   * @param <V> The exception type expected by the user
    * @return T The object returned by the SQL statement, expected by the caller
-   * @throws V Expected Exception type specified by the caller
+   * @throws SQLException
    */
-  <T, V extends Throwable> T transaction(SQLTransaction<T, V> operations, AzDBExceptionWrapper<V> exceptionWrapper) throws V;
+  <T> T transaction(SQLTransaction<T> operations) throws SQLException;
 
   /**
    * Executes the given AZ related INSERT, UPDATE, or DELETE SQL statement.
    *
    * @param updateClause sql statements to execute
-   * @param exceptionWrapper the exception message and type to be thrown if needed
    * @param params Initialize the PreparedStatement's IN parameters
-   * @param <V> The exception type expected by the user
    * @return The number of rows updated.
-   * @throws V Expected Exception type specified by the caller
+   * @throws SQLException
    */
-  <V extends Throwable> int update(String updateClause,
-      AzDBExceptionWrapper<V> exceptionWrapper,
-      Object...params) throws V;
+  int update(String updateClause,
+      Object...params) throws SQLException;
 }

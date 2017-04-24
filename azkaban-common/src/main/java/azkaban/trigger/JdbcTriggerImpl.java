@@ -82,14 +82,13 @@ public class JdbcTriggerImpl extends AbstractJdbcLoader implements
 
     ResultSetHandler<List<Trigger>> handler = new TriggerResultHandler();
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("Loading triggers from db failed. ");
-
-    List<Trigger> triggers = azDBOperator.query(GET_UPDATED_TRIGGERS, handler, exceptionWrapper, lastUpdateTime);
-
-    logger.info("Loaded " + triggers.size() + " triggers.");
-
-    return triggers;
+    try {
+      List<Trigger> triggers = azDBOperator.query(GET_UPDATED_TRIGGERS, handler, lastUpdateTime);
+      logger.info("Loaded " + triggers.size() + " triggers.");
+      return triggers;
+    } catch(SQLException ex) {
+      throw new TriggerLoaderException("Loading triggers from db failed.", ex);
+    }
   }
 
   @Override
@@ -98,27 +97,27 @@ public class JdbcTriggerImpl extends AbstractJdbcLoader implements
 
     ResultSetHandler<List<Trigger>> handler = new TriggerResultHandler();
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("Loading triggers from db failed. ");
-
-    List<Trigger> triggers = azDBOperator.query(GET_ALL_TRIGGERS, handler, exceptionWrapper);
-
-    logger.info("Loaded " + triggers.size() + " triggers.");
-
-    return triggers;
+    try {
+      List<Trigger> triggers = azDBOperator.query(GET_ALL_TRIGGERS, handler);
+      logger.info("Loaded " + triggers.size() + " triggers.");
+      return triggers;
+    } catch(SQLException ex) {
+      throw new TriggerLoaderException("Loading triggers from db failed.", ex);
+    }
   }
 
   @Override
   public void removeTrigger(Trigger t) throws TriggerLoaderException {
     logger.info("Removing trigger " + t.toString() + " from db.");
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("Remove trigger " +
-            t.getTriggerId() + " from db failed. ");
-
-    int removes = azDBOperator.update(REMOVE_TRIGGER, exceptionWrapper, t.getTriggerId());
-    if (removes == 0)
-      throw new TriggerLoaderException("No trigger has been removed.");
+    try {
+      int removes = azDBOperator.update(REMOVE_TRIGGER, t.getTriggerId());
+      if (removes == 0)
+        throw new TriggerLoaderException("No trigger has been removed.");
+    } catch(SQLException ex) {
+      throw new TriggerLoaderException("Remove trigger " +
+          t.getTriggerId() + " from db failed. ", ex);
+    }
   }
 
   /**
@@ -127,39 +126,27 @@ public class JdbcTriggerImpl extends AbstractJdbcLoader implements
   @Override
   public synchronized void addTrigger(Trigger t) throws TriggerLoaderException {
     logger.info("Inserting trigger " + t.toString() + " into db.");
+    try{
+      azDBOperator.update(ADD_TRIGGER, DateTime.now().getMillis());
+      long id = azDBOperator.getLastInsertId();
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("Error creating trigger");
-
-//    SQLTransaction<Long, TriggerLoaderException> sqlTransaction = conn -> {
-//      azDBOperator.update(ADD_TRIGGER, exceptionWrapper, DateTime.now().getMillis());
-//      return azDBOperator.getLastInsertId();
-//    };
-//
-    azDBOperator.update(ADD_TRIGGER, exceptionWrapper, DateTime.now().getMillis());
-    long id = azDBOperator.getLastInsertId();
-
-    if(id == -1L) {
-      logger.error("trigger id is not properly created.");
+      if(id == -1L) {
+        logger.error("trigger id is not properly created.");
+        throw new TriggerLoaderException("trigger id is not properly created.");
+      }
+      t.setTriggerId((int)id);
+      updateTrigger(t);
+      logger.info("uploaded trigger " + t.getDescription());
+    } catch (SQLException ex) {
       throw new TriggerLoaderException("trigger id is not properly created.");
     }
-    t.setTriggerId((int)id);
-    updateTrigger(t);
-    logger.info("uploaded trigger " + t.getDescription());
   }
 
   @Override
   public void updateTrigger(Trigger t) throws TriggerLoaderException {
     logger.info("Updating trigger " + t.getTriggerId() + " into db.");
-
     t.setLastModifyTime(System.currentTimeMillis());
-
-    try {
-      updateTrigger(t, defaultEncodingType);
-    } catch (Exception e) {
-      throw new TriggerLoaderException("Failed to update trigger "
-          + t.toString() + " into db!");
-    }
+    updateTrigger(t, defaultEncodingType);
   }
 
   private void updateTrigger(Trigger t,
@@ -182,13 +169,13 @@ public class JdbcTriggerImpl extends AbstractJdbcLoader implements
           + t.toString());
     }
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("update trigger " +
-            t.getTriggerId() + " from db failed. ");
-
-    int updates = azDBOperator.update(UPDATE_TRIGGER, exceptionWrapper, t.getTriggerId());
-    if (updates == 0)
-      throw new TriggerLoaderException("No trigger has been updated.");
+    try {
+      int updates = azDBOperator.update(UPDATE_TRIGGER, t.getTriggerId());
+      if (updates == 0)
+        throw new TriggerLoaderException("No trigger has been updated.");
+    } catch(SQLException ex) {
+      throw new TriggerLoaderException("DB Trigger update failed. ");
+    }
   }
 
   public class TriggerResultHandler implements ResultSetHandler<List<Trigger>> {
@@ -243,20 +230,19 @@ public class JdbcTriggerImpl extends AbstractJdbcLoader implements
   @Override
   public Trigger loadTrigger(int triggerId) throws TriggerLoaderException {
     logger.info("Loading trigger " + triggerId + " from db.");
-
     ResultSetHandler<List<Trigger>> handler = new TriggerResultHandler();
 
-    AzDBExceptionWrapper<TriggerLoaderException> exceptionWrapper =
-        new AzDBExceptionWrapper<>("Loading triggers from db failed. ");
+    try {
+      List<Trigger> triggers = azDBOperator.query(GET_TRIGGER, handler, triggerId);
 
-    List<Trigger> triggers = azDBOperator.query(GET_TRIGGER, handler, exceptionWrapper, triggerId);
-
-    if (triggers.size() == 0) {
-      logger.error("Loaded 0 triggers. Failed to load trigger " + triggerId);
-      throw new TriggerLoaderException(
-          "Loaded 0 triggers. Failed to load trigger " + triggerId);
+      if (triggers.size() == 0) {
+        logger.error("Loaded 0 triggers. Failed to load trigger " + triggerId);
+        throw new TriggerLoaderException(
+            "Loaded 0 triggers. Failed to load trigger " + triggerId);
+      }
+      return triggers.get(0);
+    } catch(SQLException ex) {
+      throw new TriggerLoaderException("Load a specific trigger failed.");
     }
-    return triggers.get(0);
   }
-
 }

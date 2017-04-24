@@ -20,6 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @FunctionalInterface
-public interface SQLTransaction<T, V extends Throwable> {
-  public T execute(Connection conn) throws V;
+public interface SQLTransaction<T> {
+  public T execute(AzDBTransOperator transOperator) throws SQLException;
 }
