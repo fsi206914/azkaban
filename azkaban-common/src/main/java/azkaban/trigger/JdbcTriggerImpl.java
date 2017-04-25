@@ -17,7 +17,6 @@
 package azkaban.trigger;
 
 import azkaban.database.AbstractJdbcLoader;
-import azkaban.db.AzDBExceptionWrapper;
 import azkaban.db.AzDBOperator;
 import azkaban.utils.GZIPUtils;
 import azkaban.utils.JSONUtils;

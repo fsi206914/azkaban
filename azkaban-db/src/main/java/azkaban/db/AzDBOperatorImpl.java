@@ -56,7 +56,7 @@ public class AzDBOperatorImpl implements AzDBOperator {
     try{
       return queryRunner.query(baseQuery, resultHandler, params);
     } catch (SQLException ex){
-      // TODO: Retry logics should be implemented here.
+      // todo kunkun-tang: Retry logics should be implemented here.
       logger.error("query failed", ex);
       throw ex;
     }
@@ -73,7 +73,7 @@ public class AzDBOperatorImpl implements AzDBOperator {
       conn.commit();
       return res;
     } catch (SQLException ex) {
-      // TODO: Retry logics should be implemented here.
+      // todo kunkun-tang: Retry logics should be implemented here.
       logger.error("transaction failed", ex);
       throw ex;
     } finally {
@@ -87,7 +87,7 @@ public class AzDBOperatorImpl implements AzDBOperator {
     try{
       return queryRunner.update(updateClause, params);
     } catch (SQLException ex){
-      // TODO: Retry logics should be implemented here.
+      // todo kunkun-tang: Retry logics should be implemented here.
       logger.error("update failed", ex);
       throw ex;
     }

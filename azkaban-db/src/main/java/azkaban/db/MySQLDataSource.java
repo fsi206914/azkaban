@@ -81,7 +81,7 @@ public class MySQLDataSource extends AzkabanDataSource {
 
     Connection connection = null;
     int retryAttempt = 0;
-    while (retryAttempt < Util.MAX_DB_RETRY_COUNT) {
+    while (retryAttempt < AzDBUtil.MAX_DB_RETRY_COUNT) {
       try {
           /*
            * when DB connection could not be fetched here, dbcp library will keep searching until a timeout defined in

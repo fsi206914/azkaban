@@ -16,6 +16,6 @@
  */
 package azkaban.db;
 
-public class Util {
+public class AzDBUtil {
   public static final int MAX_DB_RETRY_COUNT = 5;
 }

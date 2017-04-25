@@ -16,9 +16,11 @@
  */
 package azkaban;
 
-import azkaban.db.*;
+import azkaban.db.AzkabanDataSource;
+import azkaban.db.MySQLDataSource;
+import azkaban.db.AzDBOperator;
+import azkaban.db.AzDBOperatorImpl;
 
-//import azkaban.project.JdbcProjectImpl;
 import azkaban.project.JdbcProjectLoader;
 import azkaban.project.ProjectLoader;
 import azkaban.spi.Storage;
@@ -26,8 +28,6 @@ import azkaban.spi.StorageException;
 import azkaban.storage.LocalStorage;
 import azkaban.storage.StorageConfig;
 import azkaban.storage.StorageImplementationType;
-import azkaban.trigger.JdbcTriggerImpl;
-import azkaban.trigger.TriggerLoader;
 import azkaban.utils.Props;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -62,10 +62,10 @@ public class AzkabanCommonModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(ProjectLoader.class).to(JdbcProjectLoader.class).in(Scopes.SINGLETON);
-    bind(TriggerLoader.class).to(JdbcTriggerImpl.class).in(Scopes.SINGLETON);
     bind(Props.class).toInstance(props);
     bind(Storage.class).to(resolveStorageClassType()).in(Scopes.SINGLETON);
     bind(AzDBOperator.class).to(AzDBOperatorImpl.class).in(Scopes.SINGLETON);
+    //todo kunkun-tang : Consider both H2 DataSource and MysqlDatasource case.
     bind(AzkabanDataSource.class).toInstance(dataSource);
   }
 
@@ -92,6 +92,8 @@ public class AzkabanCommonModule extends AbstractModule {
     return new LocalStorage(new File(config.getBaseDirectoryPath()));
   }
 
+  // todo kunkun-tang: the below method should moved out to azkaban-db module eventually.
+  // Today azkaban-db can not rely on Props, so we can not do it.
   public static AzkabanDataSource getDataSource(Props props) {
     String databaseType = props.getString("database.type");
 

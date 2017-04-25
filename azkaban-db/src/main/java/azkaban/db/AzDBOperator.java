@@ -51,8 +51,11 @@ public interface AzDBOperator {
       Object...params) throws SQLException;
 
   /**
+   * Provide a way to allow users define custom SQL operations without relying on fixed
+   * SQL interface. The common use case is to group a sequence of SQL operations without
+   * commit every time.
    *
-   * @param operations A collection of DB operations
+   * @param operations A sequence of DB operations
    * @param <T> The type of object that the operations returns. Note that T could be null
    * @return T The object returned by the SQL statement, expected by the caller
    * @throws SQLException

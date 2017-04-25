@@ -58,7 +58,7 @@ public class TriggerManagerDeadlockTest {
 
   }
 
-  @Ignore @Test
+  @Test
   public void deadlockTest() throws TriggerLoaderException,
       TriggerManagerException {
     // this should well saturate it

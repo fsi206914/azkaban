@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 LinkedIn Corp.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
 package azkaban.db;
 
 import java.sql.Connection;
@@ -10,12 +26,10 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
+
 
 public class AzDBOperatorImplTest {
 
@@ -25,15 +39,13 @@ public class AzDBOperatorImplTest {
   private QueryRunner queryRunner;
   private Connection conn;
 
-  ResultSetHandler<Integer> handler = rs -> {
+  private ResultSetHandler<Integer> handler = rs -> {
     if (!rs.next()) {
       return 0;
     }
 
     return rs.getInt(1);
   };
-
-  private ScalarHandler<Object> scalarHandler = new ScalarHandler<>(1);
 
   private static final List<Integer> list = new ArrayList<>();
 
@@ -43,34 +55,31 @@ public class AzDBOperatorImplTest {
   @Before
   public void setUp() throws Exception {
     queryRunner = mock(QueryRunner.class);
+    this.dbOperator = new AzDBOperatorImpl(queryRunner);
 
     list.add(index_1);
     list.add(index_2);
-    when(queryRunner.query(any(String.class), any(ScalarHandler.class))).thenReturn(2L);
+
+    // valid query returns correct value
     when(queryRunner.query("select * from blah where ? = ?", handler, "id", 2)).thenReturn(index_2);
 
     // If select an non-existing entry, handler returns 0.
     when(queryRunner.query("select * from blah where ? = ?", handler, "id", 3)).thenReturn(0);
 
-    //Typo
+    //If typos, throw Exceptions.
     doThrow(SQLException.class).when(queryRunner).query("sele * from blah where ? = ?", handler, "id", 2);
 
-    doAnswer(new Answer<Integer>() {
-      public Integer answer(InvocationOnMock invocation) {
-        index_1 = 26;
-        return 1;
-      }
+    doAnswer(invocation -> {
+      index_1 = 26;
+      return 1;
     }).when(queryRunner).update("update blah set ? = ?", "1", 26);
-
-    this.dbOperator = new AzDBOperatorImpl(queryRunner);
-
-    conn = datasource.getConnection();
   }
 
   @Test
   public void testGetLastInsertId() throws Exception {
-    long as = dbOperator.getLastInsertId();
-    Assert.assertEquals(2L, as);
+    when(queryRunner.query(any(String.class), any(ScalarHandler.class))).thenReturn(2L);
+    long res = dbOperator.getLastInsertId();
+    Assert.assertEquals(2L, res);
   }
 
   @Test
@@ -92,17 +101,16 @@ public class AzDBOperatorImplTest {
     dbOperator.query("sele * from blah where ? = ?", handler, "id", 2);
   }
 
-
   @Test
   public void transaction() throws Exception {
-
+    conn = datasource.getConnection();
     DataSource mockDataSource = mock(datasource.getClass());
 
     when(queryRunner.getDataSource()).thenReturn(mockDataSource);
     when(mockDataSource.getConnection()).thenReturn(conn);
 
-    when(queryRunner.update(conn,"update blah set ? = ?", "1", 26)).thenReturn(1);
-    when(queryRunner.query(conn,"select * from blah where ? = ?", handler, "id", 1)).thenReturn(26);
+    when(queryRunner.update(conn, "update blah set ? = ?", "1", 26)).thenReturn(1);
+    when(queryRunner.query(conn, "select * from blah where ? = ?", handler, "id", 1)).thenReturn(26);
 
     SQLTransaction<Integer> transaction = transOperator -> {
       transOperator.update("update blah set ? = ?", "1", 26);
