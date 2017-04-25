@@ -17,11 +17,12 @@ public class AzDBOperatorImpl implements AzDBOperator {
 
   private static final Logger logger = Logger.getLogger(AzDBOperatorImpl.class);
 
-  private AzkabanDataSource dataSource;
+  private final QueryRunner queryRunner;
 
   @Inject
-  public AzDBOperatorImpl(AzkabanDataSource dataSource){
-    this.dataSource = dataSource;
+  public AzDBOperatorImpl(QueryRunner queryRunner){
+    this.queryRunner = queryRunner;
+
   }
 
   /**
@@ -33,15 +34,13 @@ public class AzDBOperatorImpl implements AzDBOperator {
    * AUTO_INCREMENT values of their own.
    * @return last insertion ID
    *
-   * TODO: not sure if we need to clase connection in the end.
    */
   @Override
   public Long getLastInsertId() {
     // A default connection: autocommit = true.
-    QueryRunner run = new QueryRunner(dataSource);
     long num = -1;
     try {
-      num = ((Number) run.query("SELECT LAST_INSERT_ID();", new ScalarHandler<>(1))).longValue();
+      num = ((Number) queryRunner.query("SELECT LAST_INSERT_ID();", new ScalarHandler<>(1))).longValue();
     } catch (SQLException ex) {
       logger.error("can not get last insertion ID", ex);
     }
@@ -54,9 +53,8 @@ public class AzDBOperatorImpl implements AzDBOperator {
       ResultSetHandler<T> resultHandler,
       Object...params) throws SQLException {
 
-    QueryRunner run = new QueryRunner(dataSource);
     try{
-      return run.query(baseQuery, resultHandler, params);
+      return queryRunner.query(baseQuery, resultHandler, params);
     } catch (SQLException ex){
       // TODO: Retry logics should be implemented here.
       logger.error("query failed", ex);
@@ -68,9 +66,9 @@ public class AzDBOperatorImpl implements AzDBOperator {
   public <T> T transaction(SQLTransaction<T> operations) throws SQLException {
     Connection conn = null;
     try{
-      conn = dataSource.getConnection();
+      conn = queryRunner.getDataSource().getConnection();
       conn.setAutoCommit(false);
-      AzDBTransOperator transOperator = new AzDBTransOperatorImpl(conn);
+      AzDBTransOperator transOperator = new AzDBTransOperatorImpl(queryRunner, conn);
       T res = operations.execute(transOperator);
       conn.commit();
       return res;
@@ -86,9 +84,8 @@ public class AzDBOperatorImpl implements AzDBOperator {
   @Override
   public int update(String updateClause,
       Object...params) throws SQLException {
-    QueryRunner run = new QueryRunner(dataSource);
     try{
-      return run.update(updateClause, params);
+      return queryRunner.update(updateClause, params);
     } catch (SQLException ex){
       // TODO: Retry logics should be implemented here.
       logger.error("update failed", ex);

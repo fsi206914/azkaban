@@ -12,17 +12,18 @@ import org.apache.commons.dbutils.ResultSetHandler;
  */
 class AzDBTransOperatorImpl implements AzDBTransOperator {
 
-  private Connection conn;
+  private final Connection conn;
+  private final QueryRunner queryRunner;
 
-  public AzDBTransOperatorImpl(Connection conn) {
+  public AzDBTransOperatorImpl(QueryRunner queryRunner, Connection conn) {
     this.conn = conn;
+    this.queryRunner= queryRunner;
   }
 
   @Override
   public <T> T query(String querySql, ResultSetHandler<T> resultHandler, Object... params) throws SQLException {
-    QueryRunner run = new QueryRunner();
     try{
-      return run.query(conn, querySql, resultHandler, params);
+      return queryRunner.query(conn, querySql, resultHandler, params);
     } catch (SQLException ex){
       //RETRY Logic should be implemented here if needed.
       throw ex;
@@ -33,9 +34,8 @@ class AzDBTransOperatorImpl implements AzDBTransOperator {
 
   @Override
   public int update(String updateClause, Object... params) throws SQLException {
-    QueryRunner run = new QueryRunner();
     try{
-      return run.update(conn, updateClause, params);
+      return queryRunner.update(conn, updateClause, params);
     } catch (SQLException ex){
       //RETRY Logic should be implemented here if needed.
       throw ex;
