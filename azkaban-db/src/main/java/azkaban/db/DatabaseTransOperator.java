@@ -36,8 +36,9 @@ public interface DatabaseTransOperator {
    * Note that last insert and this operation should use the same connection.
    *
    * @return the last inserted id in mysql per connection.
+   * @throws SQLException
    */
-  long  getLastInsertId();
+  long getLastInsertId() throws SQLException;
 
   /**
    *
@@ -58,4 +59,10 @@ public interface DatabaseTransOperator {
    * @throws SQLException
    */
   int update(String updateClause, Object... params) throws SQLException;
+
+  /**
+   *
+   * @return the JDBC connection associated with this operator.
+   */
+  Connection getConnection();
 }
