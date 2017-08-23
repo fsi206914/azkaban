@@ -62,14 +62,27 @@ public class MySQLDataSource extends AzkabanDataSource {
           return connection;
         }
       } catch (final SQLException ex) {
+
+        /**
+         * When database is completed down, DB connection fails to be fetched immediately. So we need
+         * to hang 1 minute for retry.
+         */
+        sleep(1000L * 60);
         logger.error(
             "Failed to find DB connection. waits 1 minutes and retry. No.Attempt = " + retryAttempt,
             ex);
-      } finally {
         retryAttempt++;
       }
     }
     return null;
+  }
+
+  private void sleep(final long milliseconds) {
+    try {
+      Thread.sleep(milliseconds);
+    } catch (final InterruptedException e) {
+      logger.error("can not sleep", e);
+    }
   }
 
   @Override
