@@ -16,7 +16,9 @@
 package azkaban.db;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.ConnectionFactory;
@@ -69,14 +71,15 @@ public class MySQLDataSource extends AzkabanDataSource {
          * When DB fails over from master to slave, master is set to read-only mode. We must keep
          * finding correct data source and sql connection.
          */
-        if (connection == null || connection.isReadOnly()) {
+        if (connection == null || isReadOnly(connection)) {
           throw new SQLException("Failed to find DB connection Or connection is read only. ");
         } else {
           return connection;
         }
       } catch (final SQLException ex) {
 
-        logger.error( "Failed to find write-enabled DB connection. Wait 1 minutes and retry. No.Attempt = " + retryAttempt, ex);
+        logger.error( "Failed to find write-enabled DB connection. Wait 1 minutes and retry."
+            + " No.Attempt = " + retryAttempt, ex);
         /**
          * When database is completed down, DB connection fails to be fetched immediately. So we need
          * to hang 1 minute for retry.
@@ -89,6 +92,11 @@ public class MySQLDataSource extends AzkabanDataSource {
     return connection;
   }
 
+  /**
+   * This method keeps the original functionality from parent class. The difference is that we want to
+   * manage dataSource in AZ side, so that we can assign null to it and create new dataSource (rather
+   * than fetch the existing dataSource) if dataSource is broken but not null.
+   */
   @Override
   protected synchronized DataSource createDataSource() throws SQLException {
 
@@ -159,6 +167,16 @@ public class MySQLDataSource extends AzkabanDataSource {
   }
 
   private void closeConnectionPool(final GenericObjectPool<PoolableConnection> connectionPool) {
+  }
+
+  private boolean isReadOnly(final Connection conn) throws SQLException {
+    final Statement stmt = conn.createStatement();
+    final ResultSet rs = stmt.executeQuery("SELECT @@global.read_only");
+    if (rs.next()) {
+      final int value = rs.getInt(1);
+      return value != 0;
+    }
+    throw new SQLException("can not fetch read only value from DB");
   }
 
   private void sleep(final long milliseconds) {
