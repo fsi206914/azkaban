@@ -70,52 +70,6 @@ public class AzkabanProjectLoaderTest {
         this.storageManager, new FlowLoaderFactory(props));
   }
 
-  @Test
-  public void uploadProject() throws Exception {
-    when(this.projectLoader.getLatestProjectVersion(this.project)).thenReturn(this.VERSION);
-
-    final URL resource = requireNonNull(
-        getClass().getClassLoader().getResource("sample_flow_01.zip"));
-    final File projectZipFile = new File(resource.getPath());
-    final User uploader = new User("test_user");
-
-    checkValidationReport(this.azkabanProjectLoader
-        .uploadProject(this.project, projectZipFile, "zip", uploader, null));
-
-    verify(this.storageManager)
-        .uploadProject(this.project, this.VERSION + 1, projectZipFile, uploader);
-  }
-
-  @Test
-  public void getProjectFile() throws Exception {
-    when(this.projectLoader.getLatestProjectVersion(this.project)).thenReturn(this.VERSION);
-
-    // Run the code
-    this.azkabanProjectLoader.getProjectFile(this.project, -1);
-
-    verify(this.projectLoader).getLatestProjectVersion(this.project);
-    verify(this.storageManager).getProjectFile(this.ID, this.VERSION);
-  }
-
-  @Test
-  public void uploadProjectWithYamlFiles() throws Exception {
-    final File projectZipFile = ExecutionsTestUtil.getFlowFile(BASIC_FLOW_YAML_DIR, PROJECT_ZIP);
-    final int flowVersion = 0;
-    final User uploader = new User("test_user");
-
-    when(this.projectLoader.getLatestProjectVersion(this.project)).thenReturn(this.VERSION);
-    when(this.projectLoader.getLatestFlowVersion(this.ID, this.VERSION, BASIC_FLOW_FILE))
-        .thenReturn(flowVersion);
-
-    checkValidationReport(this.azkabanProjectLoader
-        .uploadProject(this.project, projectZipFile, "zip", uploader, null));
-
-    verify(this.storageManager)
-        .uploadProject(this.project, this.VERSION + 1, projectZipFile, uploader);
-    verify(this.projectLoader)
-        .uploadFlowFile(eq(this.ID), eq(this.VERSION + 1), any(File.class), eq(flowVersion + 1));
-
-  }
 
   private void checkValidationReport(final Map<String, ValidationReport> validationReportMap) {
     assertThat(validationReportMap.size()).isEqualTo(1);
