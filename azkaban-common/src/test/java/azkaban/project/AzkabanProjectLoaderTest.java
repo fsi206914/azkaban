@@ -18,26 +18,16 @@
 package azkaban.project;
 
 import static azkaban.Constants.ConfigurationKeys.PROJECT_TEMP_DIR;
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import azkaban.project.validator.ValidationReport;
 import azkaban.project.validator.ValidationStatus;
 import azkaban.storage.StorageManager;
-import azkaban.test.executions.ExecutionsTestUtil;
-import azkaban.user.User;
 import azkaban.utils.Props;
-import java.io.File;
-import java.net.URL;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class AzkabanProjectLoaderTest {
