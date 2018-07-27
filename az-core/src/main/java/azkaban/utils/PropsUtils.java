@@ -35,6 +35,9 @@ import org.apache.commons.jexl2.MapContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+/**
+ * The type Props utils.
+ */
 public class PropsUtils {
 
   private static final Logger logger = Logger.getLogger(PropsUtils.class);
@@ -78,6 +81,13 @@ public class PropsUtils {
     }
   }
 
+  /**
+   * Load props props.
+   *
+   * @param parent the parent
+   * @param propFiles the prop files
+   * @return the props
+   */
   public static Props loadProps(final Props parent, final File... propFiles) {
     try {
       Props props = new Props(parent);
@@ -133,6 +143,13 @@ public class PropsUtils {
     }
   }
 
+  /**
+   * Ends with boolean.
+   *
+   * @param file the file
+   * @param suffixes the suffixes
+   * @return the boolean
+   */
   public static boolean endsWith(final File file, final String... suffixes) {
     for (final String suffix : suffixes) {
       if (file.getName().endsWith(suffix)) {
@@ -142,11 +159,23 @@ public class PropsUtils {
     return false;
   }
 
+  /**
+   * Is variable replacement pattern boolean.
+   *
+   * @param str the str
+   * @return the boolean
+   */
   public static boolean isVariableReplacementPattern(final String str) {
     final Matcher matcher = VARIABLE_REPLACEMENT_PATTERN.matcher(str);
     return matcher.matches();
   }
 
+  /**
+   * Resolve props props.
+   *
+   * @param props the props
+   * @return the props
+   */
   public static Props resolveProps(final Props props) {
     if (props == null) {
       return null;
@@ -280,11 +309,25 @@ public class PropsUtils {
     return resolveVariableExpression(newValue, lastIndex, jexl);
   }
 
+  /**
+   * To json string string.
+   *
+   * @param props the props
+   * @param localOnly the local only
+   * @return the string
+   */
   public static String toJSONString(final Props props, final boolean localOnly) {
     final Map<String, String> map = toStringMap(props, localOnly);
     return JSONUtils.toJSON(map);
   }
 
+  /**
+   * To string map map.
+   *
+   * @param props the props
+   * @param localOnly the local only
+   * @return the map
+   */
   public static Map<String, String> toStringMap(final Props props, final boolean localOnly) {
     final HashMap<String, String> map = new HashMap<>();
     final Set<String> keyset = localOnly ? props.localKeySet() : props.getKeySet();
@@ -297,12 +340,25 @@ public class PropsUtils {
     return map;
   }
 
+  /**
+   * From json string props.
+   *
+   * @param json the json
+   * @return the props
+   * @throws IOException the io exception
+   */
   public static Props fromJSONString(final String json) throws IOException {
     final Map<String, String> obj = (Map<String, String>) JSONUtils.parseJSONFromString(json);
     final Props props = new Props(null, obj);
     return props;
   }
 
+  /**
+   * From hierarchical map props.
+   *
+   * @param propsMap the props map
+   * @return the props
+   */
   public static Props fromHierarchicalMap(final Map<String, Object> propsMap) {
     if (propsMap == null) {
       return null;
@@ -320,6 +376,12 @@ public class PropsUtils {
     return props;
   }
 
+  /**
+   * To hierarchical map map.
+   *
+   * @param props the props
+   * @return the map
+   */
   public static Map<String, Object> toHierarchicalMap(final Props props) {
     final Map<String, Object> propsMap = new HashMap<>();
     propsMap.put("source", props.getSource());
@@ -333,6 +395,10 @@ public class PropsUtils {
   }
 
   /**
+   * Gets property diff.
+   *
+   * @param oldProps the old props
+   * @param newProps the new props
    * @return the difference between oldProps and newProps.
    */
   public static String getPropertyDiff(Props oldProps, Props newProps) {

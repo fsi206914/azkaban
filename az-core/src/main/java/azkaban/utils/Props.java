@@ -57,6 +57,8 @@ public class Props {
 
   /**
    * Constructor for empty Props with parent override.
+   *
+   * @param parent the parent
    */
   public Props(final Props parent) {
     this._current = new HashMap<>();
@@ -65,6 +67,10 @@ public class Props {
 
   /**
    * Load props from a file.
+   *
+   * @param parent the parent
+   * @param filepath the filepath
+   * @throws IOException the io exception
    */
   public Props(final Props parent, final String filepath) throws IOException {
     this(parent, new File(filepath));
@@ -72,6 +78,10 @@ public class Props {
 
   /**
    * Load props from a file.
+   *
+   * @param parent the parent
+   * @param file the file
+   * @throws IOException the io exception
    */
   public Props(final Props parent, final File file) throws IOException {
     this(parent);
@@ -89,6 +99,10 @@ public class Props {
 
   /**
    * Create props from property input streams
+   *
+   * @param parent the parent
+   * @param inputStream the input stream
+   * @throws IOException the io exception
    */
   public Props(final Props parent, final InputStream inputStream) throws IOException {
     this(parent);
@@ -97,6 +111,9 @@ public class Props {
 
   /**
    * Create properties from maps of properties
+   *
+   * @param parent the parent
+   * @param props the props
    */
   public Props(final Props parent, final Map<String, String>... props) {
     this(parent);
@@ -107,6 +124,9 @@ public class Props {
 
   /**
    * Create properties from Properties objects
+   *
+   * @param parent the parent
+   * @param properties the properties
    */
   public Props(final Props parent, final Properties... properties) {
     this(parent);
@@ -117,6 +137,9 @@ public class Props {
 
   /**
    * Create a Props object with the contents set to that of props.
+   *
+   * @param parent the parent
+   * @param props the props
    */
   public Props(final Props parent, final Props props) {
     this(parent);
@@ -128,6 +151,9 @@ public class Props {
   /**
    * Create a Props with a null parent from a list of key value pairing. i.e. [key1, value1, key2,
    * value2 ...]
+   *
+   * @param args the args
+   * @return the props
    */
   public static Props of(final String... args) {
     return of((Props) null, args);
@@ -135,6 +161,10 @@ public class Props {
 
   /**
    * Create a Props from a list of key value pairing. i.e. [key1, value1, key2, value2 ...]
+   *
+   * @param parent the parent
+   * @param args the args
+   * @return the props
    */
   public static Props of(final Props parent, final String... args) {
     if (args.length % 2 != 0) {
@@ -152,6 +182,9 @@ public class Props {
 
   /**
    * Clones the Props p object and all of its parents.
+   *
+   * @param p the p
+   * @return the props
    */
   public static Props clone(final Props p) {
     return copyNext(p);
@@ -186,6 +219,11 @@ public class Props {
     this.put(properties);
   }
 
+  /**
+   * Gets earliest ancestor.
+   *
+   * @return the earliest ancestor
+   */
   public Props getEarliestAncestor() {
     if (this._parent == null) {
       return this;
@@ -194,6 +232,11 @@ public class Props {
     return this._parent.getEarliestAncestor();
   }
 
+  /**
+   * Sets earliest ancestor.
+   *
+   * @param parent the parent
+   */
   public void setEarliestAncestor(final Props parent) {
     final Props props = getEarliestAncestor();
     props.setParent(parent);
@@ -208,6 +251,9 @@ public class Props {
 
   /**
    * Check key in current Props then search in parent
+   *
+   * @param k the k
+   * @return the boolean
    */
   public boolean containsKey(final Object k) {
     return this._current.containsKey(k)
@@ -216,6 +262,9 @@ public class Props {
 
   /**
    * Check value in current Props then search in parent
+   *
+   * @param value the value
+   * @return the boolean
    */
   public boolean containsValue(final Object value) {
     return this._current.containsValue(value)
@@ -224,6 +273,9 @@ public class Props {
 
   /**
    * Return value if available in current Props otherwise return from parent
+   *
+   * @param key the key
+   * @return the string
    */
   public String get(final Object key) {
     if (this._current.containsKey(key)) {
@@ -237,6 +289,8 @@ public class Props {
 
   /**
    * Get the key set from the current Props
+   *
+   * @return the set
    */
   public Set<String> localKeySet() {
     return this._current.keySet();
@@ -244,11 +298,18 @@ public class Props {
 
   /**
    * Get parent Props
+   *
+   * @return the parent
    */
   public Props getParent() {
     return this._parent;
   }
 
+  /**
+   * Sets parent.
+   *
+   * @param prop the prop
+   */
   public void setParent(final Props prop) {
     this._parent = prop;
   }
@@ -259,8 +320,8 @@ public class Props {
    *
    * @param key The key to put the value to
    * @param value The value to do substitution on and store
-   * @throws IllegalArgumentException If the variable given for substitution is not a valid key in
-   * this Props.
+   * @return the string
+   * @throws IllegalArgumentException If the variable given for substitution is not a valid key in this Props.
    */
   public String put(final String key, final String value) {
     return this._current.put(key, value);
@@ -272,8 +333,7 @@ public class Props {
    * on the Props and next on the Properties object.
    *
    * @param properties The properties to put
-   * @throws IllegalArgumentException If the variable given for substitution is not a valid key in
-   * this Props.
+   * @throws IllegalArgumentException If the variable given for substitution is not a valid key in this Props.
    */
   public void put(final Properties properties) {
     for (final String propName : properties.stringPropertyNames()) {
@@ -283,6 +343,10 @@ public class Props {
 
   /**
    * Put integer
+   *
+   * @param key the key
+   * @param value the value
+   * @return the string
    */
   public String put(final String key, final Integer value) {
     return this._current.put(key, value.toString());
@@ -290,6 +354,10 @@ public class Props {
 
   /**
    * Put Long. Stores as String.
+   *
+   * @param key the key
+   * @param value the value
+   * @return the string
    */
   public String put(final String key, final Long value) {
     return this._current.put(key, value.toString());
@@ -297,6 +365,10 @@ public class Props {
 
   /**
    * Put Double. Stores as String.
+   *
+   * @param key the key
+   * @param value the value
+   * @return the string
    */
   public String put(final String key, final Double value) {
     return this._current.put(key, value.toString());
@@ -304,6 +376,8 @@ public class Props {
 
   /**
    * Put everything in the map into the props.
+   *
+   * @param m the m
    */
   public void putAll(final Map<? extends String, ? extends String> m) {
     if (m == null) {
@@ -317,6 +391,8 @@ public class Props {
 
   /**
    * Put all properties in the props into the current props. Will handle null p.
+   *
+   * @param p the p
    */
   public void putAll(final Props p) {
     if (p == null) {
@@ -330,6 +406,8 @@ public class Props {
 
   /**
    * Puts only the local props from p into the current properties
+   *
+   * @param p the p
    */
   public void putLocal(final Props p) {
     for (final String key : p.localKeySet()) {
@@ -339,6 +417,9 @@ public class Props {
 
   /**
    * Remove only the local value of key s, and not the parents.
+   *
+   * @param s the s
+   * @return the string
    */
   public String removeLocal(final Object s) {
     return this._current.remove(s);
@@ -346,6 +427,8 @@ public class Props {
 
   /**
    * The number of unique keys defined by this Props and all parent Props
+   *
+   * @return the int
    */
   public int size() {
     return getKeySet().size();
@@ -354,6 +437,8 @@ public class Props {
   /**
    * The number of unique keys defined by this Props (keys defined only in parent Props are not
    * counted)
+   *
+   * @return the int
    */
   public int localSize() {
     return this._current.size();
@@ -362,6 +447,9 @@ public class Props {
   /**
    * Attempts to return the Class that corresponds to the Props value. If the class doesn't exit, an
    * IllegalArgumentException will be thrown.
+   *
+   * @param key the key
+   * @return the class
    */
   public Class<?> getClass(final String key) {
     try {
@@ -376,6 +464,14 @@ public class Props {
     }
   }
 
+  /**
+   * Gets class.
+   *
+   * @param key the key
+   * @param initialize the initialize
+   * @param cl the cl
+   * @return the class
+   */
   public Class<?> getClass(final String key, final boolean initialize, final ClassLoader cl) {
     try {
       if (containsKey(key)) {
@@ -391,6 +487,10 @@ public class Props {
 
   /**
    * Gets the class from the Props. If it doesn't exist, it will return the defaultClass
+   *
+   * @param key the key
+   * @param defaultClass the default class
+   * @return the class
    */
   public Class<?> getClass(final String key, final Class<?> defaultClass) {
     if (containsKey(key)) {
@@ -402,6 +502,10 @@ public class Props {
 
   /**
    * Gets the string from the Props. If it doesn't exist, it will return the defaultValue
+   *
+   * @param key the key
+   * @param defaultValue the default value
+   * @return the string
    */
   public String getString(final String key, final String defaultValue) {
     if (containsKey(key)) {
@@ -413,6 +517,9 @@ public class Props {
 
   /**
    * Gets the string from the Props. If it doesn't exist, throw and UndefinedPropertiesException
+   *
+   * @param key the key
+   * @return the string
    */
   public String getString(final String key) {
     if (containsKey(key)) {
@@ -425,6 +532,9 @@ public class Props {
 
   /**
    * Returns a list of strings with the comma as the separator of the value
+   *
+   * @param key the key
+   * @return the string list
    */
   public List<String> getStringList(final String key) {
     return getStringList(key, "\\s*,\\s*");
@@ -434,12 +544,15 @@ public class Props {
    * Returns a list of clusters with the comma as the separator of the value
    * e.g., for input string: "thrift://hcat1:port,thrift://hcat2:port;thrift://hcat3:port,thrift://hcat4:port;"
    * we will get ["thrift://hcat1:port,thrift://hcat2:port", "thrift://hcat3:port,thrift://hcat4:port"] as output
+   *
+   * @param key the key
+   * @return the string list from cluster
    */
   public List<String> getStringListFromCluster(final String key) {
-    List<String> curlist = getStringList(key, "\\s*;\\s*");
+    final List<String> curlist = getStringList(key, "\\s*;\\s*");
     // remove empty elements in the array
-    for (Iterator<String> iter = curlist.listIterator(); iter.hasNext(); ) {
-      String a = iter.next();
+    for (final Iterator<String> iter = curlist.listIterator(); iter.hasNext(); ) {
+      final String a = iter.next();
       if (a.length() == 0) {
         iter.remove();
       }
@@ -449,6 +562,10 @@ public class Props {
 
   /**
    * Returns a list of strings with the sep as the separator of the value
+   *
+   * @param key the key
+   * @param sep the sep
+   * @return the string list
    */
   public List<String> getStringList(final String key, final String sep) {
     final String val = get(key);
@@ -467,6 +584,10 @@ public class Props {
   /**
    * Returns a list of strings with the comma as the separator of the value. If the value is null,
    * it'll return the defaultValue.
+   *
+   * @param key the key
+   * @param defaultValue the default value
+   * @return the string list
    */
   public List<String> getStringList(final String key, final List<String> defaultValue) {
     if (containsKey(key)) {
@@ -479,6 +600,11 @@ public class Props {
   /**
    * Returns a list of strings with the sep as the separator of the value. If the value is null,
    * it'll return the defaultValue.
+   *
+   * @param key the key
+   * @param defaultValue the default value
+   * @param sep the sep
+   * @return the string list
    */
   public List<String> getStringList(final String key, final List<String> defaultValue,
       final String sep) {
@@ -492,6 +618,10 @@ public class Props {
   /**
    * Returns true if the value equals "true". If the value is null, then the default value is
    * returned.
+   *
+   * @param key the key
+   * @param defaultValue the default value
+   * @return the boolean
    */
   public boolean getBoolean(final String key, final boolean defaultValue) {
     if (containsKey(key)) {
@@ -504,6 +634,9 @@ public class Props {
   /**
    * Returns true if the value equals "true". If the value is null, then an
    * UndefinedPropertyException is thrown.
+   *
+   * @param key the key
+   * @return the boolean
    */
   public boolean getBoolean(final String key) {
     if (containsKey(key)) {
@@ -517,6 +650,10 @@ public class Props {
   /**
    * Returns the long representation of the value. If the value is null, then the default value is
    * returned. If the value isn't a long, then a parse exception will be thrown.
+   *
+   * @param name the name
+   * @param defaultValue the default value
+   * @return the long
    */
   public long getLong(final String name, final long defaultValue) {
     if (containsKey(name)) {
@@ -530,6 +667,9 @@ public class Props {
    * Returns the long representation of the value. If the value is null, then a
    * UndefinedPropertyException will be thrown. If the value isn't a long, then a parse exception
    * will be thrown.
+   *
+   * @param name the name
+   * @return the long
    */
   public long getLong(final String name) {
     if (containsKey(name)) {
@@ -543,6 +683,10 @@ public class Props {
   /**
    * Returns the int representation of the value. If the value is null, then the default value is
    * returned. If the value isn't a int, then a parse exception will be thrown.
+   *
+   * @param name the name
+   * @param defaultValue the default value
+   * @return the int
    */
   public int getInt(final String name, final int defaultValue) {
     if (containsKey(name)) {
@@ -556,6 +700,9 @@ public class Props {
    * Returns the int representation of the value. If the value is null, then a
    * UndefinedPropertyException will be thrown. If the value isn't a int, then a parse exception
    * will be thrown.
+   *
+   * @param name the name
+   * @return the int
    */
   public int getInt(final String name) {
     if (containsKey(name)) {
@@ -569,6 +716,10 @@ public class Props {
   /**
    * Returns the double representation of the value. If the value is null, then the default value is
    * returned. If the value isn't a double, then a parse exception will be thrown.
+   *
+   * @param name the name
+   * @param defaultValue the default value
+   * @return the double
    */
   public double getDouble(final String name, final double defaultValue) {
     if (containsKey(name)) {
@@ -582,6 +733,9 @@ public class Props {
    * Returns the double representation of the value. If the value is null, then a
    * UndefinedPropertyException will be thrown. If the value isn't a double, then a parse exception
    * will be thrown.
+   *
+   * @param name the name
+   * @return the double
    */
   public double getDouble(final String name) {
     if (containsKey(name)) {
@@ -595,6 +749,9 @@ public class Props {
   /**
    * Returns the uri representation of the value. If the value is null, then the default value is
    * returned. If the value isn't a uri, then a IllegalArgumentException will be thrown.
+   *
+   * @param name the name
+   * @return the uri
    */
   public URI getUri(final String name) {
     if (containsKey(name)) {
@@ -612,6 +769,10 @@ public class Props {
   /**
    * Returns the double representation of the value. If the value is null, then the default value is
    * returned. If the value isn't a uri, then a IllegalArgumentException will be thrown.
+   *
+   * @param name the name
+   * @param defaultValue the default value
+   * @return the uri
    */
   public URI getUri(final String name, final URI defaultValue) {
     if (containsKey(name)) {
@@ -621,6 +782,13 @@ public class Props {
     }
   }
 
+  /**
+   * Gets uri.
+   *
+   * @param name the name
+   * @param defaultValue the default value
+   * @return the uri
+   */
   public URI getUri(final String name, final String defaultValue) {
     try {
       return getUri(name, new URI(defaultValue));
@@ -647,6 +815,8 @@ public class Props {
 
   /**
    * Returns a copy of only the local values of this props
+   *
+   * @return the props
    */
   public Props local() {
     return new Props(null, this._current);
@@ -670,6 +840,8 @@ public class Props {
    * Returns a java.util.Properties file populated with the current Properties in here.
    * Note: if you want to import parent properties (e.g., database credentials), please use
    * toAllProperties
+   *
+   * @return the properties
    */
   public Properties toProperties() {
     final Properties p = new Properties();
@@ -682,15 +854,18 @@ public class Props {
 
   /**
    * Returns a java.util.Properties file populated with both current and parent properties.
+   *
+   * @return the properties
    */
   public Properties toAllProperties() {
-    Properties allProp = new Properties();
+    final Properties allProp = new Properties();
     // import local properties
     allProp.putAll(toProperties());
 
     // import parent properties
-    if(_parent != null)
-      allProp.putAll(_parent.toProperties());
+    if (this._parent != null) {
+      allProp.putAll(this._parent.toProperties());
+    }
 
     return allProp;
   }
@@ -734,7 +909,7 @@ public class Props {
    * Returns a map of all the flattened properties, the item in the returned map is sorted
    * alphabetically by the key value.
    *
-   * @Return
+   * @return the flattened
    */
   public Map<String, String> getFlattened() {
     final TreeMap<String, String> returnVal = new TreeMap<>();
@@ -746,6 +921,7 @@ public class Props {
    * Get a map of all properties by string prefix
    *
    * @param prefix The string prefix
+   * @return the map by prefix
    */
   public Map<String, String> getMapByPrefix(final String prefix) {
     final Map<String, String> values = this._parent == null ? new HashMap<>() :
@@ -762,6 +938,8 @@ public class Props {
 
   /**
    * Returns a set of all keys, including the parents
+   *
+   * @return the key set
    */
   public Set<String> getKeySet() {
     final HashSet<String> keySet = new HashSet<>();
@@ -777,6 +955,9 @@ public class Props {
 
   /**
    * Logs the property in the given logger
+   *
+   * @param logger the logger
+   * @param comment the comment
    */
   public void logProperties(final Logger logger, final String comment) {
     logger.info(comment);
@@ -804,6 +985,9 @@ public class Props {
 
   /**
    * Returns true if the properties are equivalent, regardless of the hierarchy.
+   *
+   * @param p the p
+   * @return the boolean
    */
   public boolean equalsProps(final Props p) {
     if (p == null) {
@@ -852,10 +1036,20 @@ public class Props {
     return builder.toString();
   }
 
+  /**
+   * Gets source.
+   *
+   * @return the source
+   */
   public String getSource() {
     return this.source;
   }
 
+  /**
+   * Sets source.
+   *
+   * @param source the source
+   */
   public void setSource(final String source) {
     this.source = source;
   }

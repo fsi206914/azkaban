@@ -51,25 +51,15 @@ import org.joda.time.Weeks;
 import org.joda.time.Years;
 import org.quartz.CronExpression;
 
-/**
- * A util helper class full of static methods that are commonly used.
- */
 public class Utils {
 
   public static final Random RANDOM = new Random();
   private static final Logger logger = Logger
       .getLogger(Utils.class);
 
-  /**
-   * Private constructor.
-   */
   private Utils() {
   }
 
-  /**
-   * Equivalent to Object.equals except that it handles nulls. If a and b are both null, true is
-   * returned.
-   */
   public static boolean equals(final Object a, final Object b) {
     if (a == null || b == null) {
       return a == b;
@@ -78,14 +68,6 @@ public class Utils {
     return a.equals(b);
   }
 
-  /**
-   * Return the object if it is non-null, otherwise throw an exception
-   *
-   * @param <T> The type of the object
-   * @param t The object
-   * @return The object if it is not null
-   * @throws IllegalArgumentException if the object is null
-   */
   public static <T> T nonNull(final T t) {
     if (t == null) {
       throw new IllegalArgumentException("Null value not allowed.");
@@ -105,22 +87,11 @@ public class Utils {
     return null;
   }
 
-  /**
-   * Print the message and then exit with the given exit code
-   *
-   * @param message The message to print
-   * @param exitCode The exit code
-   */
   public static void croak(final String message, final int exitCode) {
     System.err.println(message);
     System.exit(exitCode);
   }
 
-  /**
-   * Tests whether a port is valid or not
-   *
-   * @return true, if port is valid
-   */
   public static boolean isValidPort(final int port) {
     if (port >= 1 && port <= 65535) {
       return true;
@@ -247,12 +218,6 @@ public class Utils {
     return (Double) obj;
   }
 
-  /**
-   * Get the root cause of the Exception
-   *
-   * @param e The Exception
-   * @return The root cause of the Exception
-   */
   private static RuntimeException getCause(final InvocationTargetException e) {
     final Throwable cause = e.getCause();
     if (cause instanceof RuntimeException) {
@@ -262,12 +227,6 @@ public class Utils {
     }
   }
 
-  /**
-   * Get the Class of all the objects
-   *
-   * @param args The objects to get the Classes from
-   * @return The classes as an array
-   */
   public static Class<?>[] getTypes(final Object... args) {
     final Class<?>[] argTypes = new Class<?>[args.length];
     for (int i = 0; i < argTypes.length; i++) {
@@ -280,13 +239,6 @@ public class Utils {
     return callConstructor(c, getTypes(args), args);
   }
 
-  /**
-   * Call the class constructor with the given arguments
-   *
-   * @param c The class
-   * @param args The arguments
-   * @return The constructed object
-   */
   public static Object callConstructor(final Class<?> c, final Class<?>[] argTypes,
       final Object[] args) {
     try {
@@ -434,10 +386,6 @@ public class Utils {
     return periodStr;
   }
 
-  /**
-   * @param strMemSize : memory string in the format such as 1G, 500M, 3000K, 5000
-   * @return : long value of memory amount in kb
-   */
   public static long parseMemString(final String strMemSize) {
     if (strMemSize == null) {
       return 0L;
@@ -467,15 +415,6 @@ public class Utils {
     return sizeInKb;
   }
 
-  /**
-   * @param cronExpression: A cron expression is a string separated by white space, to provide a
-   * parser and evaluator for Quartz cron expressions.
-   * @return : org.quartz.CronExpression object.
-   *
-   * TODO: Currently, we have to transform Joda Timezone to Java Timezone due to CronExpression.
-   * Since Java8 enhanced Time functionalities, We consider transform all Jodatime to Java Time in
-   * future.
-   */
   public static CronExpression parseCronExpression(final String cronExpression,
       final DateTimeZone timezone) {
     if (cronExpression != null) {
@@ -493,9 +432,6 @@ public class Utils {
     }
   }
 
-  /**
-   * @return if the cronExpression is valid or not.
-   */
   public static boolean isCronExpressionValid(final String cronExpression,
       final DateTimeZone timezone) {
     if (!CronExpression.isValidExpression(cronExpression)) {

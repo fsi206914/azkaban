@@ -41,3 +41,33 @@ dependencies {
     compile deps.metricsJvm
     compile deps.quartz
 }
+
+ext.localReleaseDest = "${buildDir}/release/${VERSION_NAME}"
+
+def someFile = file('javadoc')
+
+// 发布到本地目录，非必须
+ext.localReleaseDest = "${buildDir}/release/${VERSION_NAME}"
+
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    options.encoding = "UTF-8"
+}
+
+task javadocsJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+artifacts {
+//    archives someFile
+    archives javadocsJar
+    archives sourcesJar
+}
+
+apply from: '../mvn_publish.gradle'

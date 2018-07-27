@@ -78,6 +78,7 @@ ext.deps = [
         guava               : 'com.google.guava:guava:21.0',
         guice               : 'com.google.inject:guice:4.1.0',
         h2                  : 'com.h2database:h2:1.4.193',
+        azcore              : 'com.linkedin.azkaban:az-core:3.50.3',
         hadoopAnnotations   : "org.apache.hadoop:hadoop-annotations:" + versions.hadoop,
         hadoopAuth          : "org.apache.hadoop:hadoop-auth:" + versions.hadoop,
         hadoopCommon        : "org.apache.hadoop:hadoop-common:" + versions.hadoop,

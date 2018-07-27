@@ -44,6 +44,11 @@ public class MetricsManager {
   private static final Logger log = LoggerFactory.getLogger(MetricsManager.class);
   private final MetricRegistry registry;
 
+  /**
+   * Instantiates a new Metrics manager.
+   *
+   * @param registry the registry
+   */
   @Inject
   public MetricsManager(final MetricRegistry registry) {
     this.registry = registry;
@@ -59,6 +64,9 @@ public class MetricsManager {
   /**
    * A {@link Meter} measures the rate of events over time (e.g., “requests per second”). Here we
    * track 1-minute moving averages.
+   *
+   * @param name the name
+   * @return the meter
    */
   public Meter addMeter(final String name) {
     final Meter curr = this.registry.meter(name);
@@ -71,8 +79,11 @@ public class MetricsManager {
    * Supplier, a Functional Interface, to get Generics metrics values. With this support, no matter
    * what our interesting metrics is a Double or a Long, we could pass it to Metrics Parser.
    *
-   * E.g., in {@link CommonMetrics#setupAllMetrics()}, we construct a supplier lambda by having a
    * AtomicLong object and its get method, in order to collect dbConnection metric.
+   *
+   * @param <T> the type parameter
+   * @param name the name
+   * @param gaugeFunc the gauge func
    */
   public <T> void addGauge(final String name, final Supplier<T> gaugeFunc) {
     this.registry.register(name, (Gauge<T>) gaugeFunc::get);
@@ -81,6 +92,9 @@ public class MetricsManager {
   /**
    * reporting metrics to remote metrics collector. Note: this method must be synchronized, since
    * both web server and executor will call it during initialization.
+   *
+   * @param reporterName the reporter name
+   * @param props the props
    */
   public synchronized void startReporting(final String reporterName, final Props props) {
     final String metricsReporterClassName = props.get(CUSTOM_METRICS_REPORTER_CLASS_NAME);

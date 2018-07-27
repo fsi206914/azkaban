@@ -55,3 +55,28 @@ dependencies {
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
+
+ext.localReleaseDest = "${buildDir}/release/${VERSION_NAME}"
+
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    options.encoding = "UTF-8"
+}
+
+task javadocsJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+artifacts {
+//    archives someFile
+    archives javadocsJar
+    archives sourcesJar
+}
+
+apply from: '../mvn_publish.gradle'
