@@ -17,9 +17,11 @@ nodes:
   - name: jobA
     type: test
     config:
-      seconds: 2
+      fail: false
+      seconds: 0
 
   - name: jobB
     type: test
     config:
-      seconds: 2
+      fail: false
+      seconds: 0
