@@ -48,7 +48,7 @@ task javadocs(type: Javadoc) {
     options.encoding = "UTF-8"
 }
 
-task javadocsJar(type: Jar, dependsOn: javadoc) {
+task javadocsJar(type: Jar, dependsOn: javadocs) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }

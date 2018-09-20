@@ -71,3 +71,26 @@ distributions {
         }
     }
 }
+
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    failOnError = false
+    options.encoding = "UTF-8"
+}
+
+task javadocsJar(type: Jar, dependsOn: javadocs) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+artifacts {
+    archives javadocsJar
+    archives sourcesJar
+}
+
+apply from: '../mvn_publish.gradle'
