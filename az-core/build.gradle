@@ -42,15 +42,9 @@ dependencies {
     compile deps.quartz
 }
 
-ext.localReleaseDest = "${buildDir}/release/${VERSION_NAME}"
-
-def someFile = file('javadoc')
-
-// 发布到本地目录，非必须
-ext.localReleaseDest = "${buildDir}/release/${VERSION_NAME}"
-
 task javadocs(type: Javadoc) {
     source = sourceSets.main.allJava
+    failOnError = false
     options.encoding = "UTF-8"
 }
 
@@ -65,7 +59,6 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-//    archives someFile
     archives javadocsJar
     archives sourcesJar
 }
